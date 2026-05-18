@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const authRoutes = require('./routes/auth');
+const itemsRoutes = require('./routes/items');
+const borrowsRoutes = require('./routes/borrows');
+const dashboardRoutes = require('./routes/dashboard');
 
 function createApp() {
   const app = express();
@@ -14,6 +17,9 @@ function createApp() {
   });
 
   app.use('/api/auth', authRoutes);
+  app.use('/api/items', itemsRoutes);
+  app.use('/api/borrows', borrowsRoutes);
+  app.use('/api/dashboard', dashboardRoutes);
 
   return app;
 }
