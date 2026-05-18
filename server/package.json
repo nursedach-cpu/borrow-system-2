@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "node --watch server.js",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit --detectOpenHandles"
+    "test": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --forceExit --detectOpenHandles"
+  },
+  "jest": {
+    "testMatch": ["**/__tests__/**/*.test.js"],
+    "testTimeout": 30000
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
