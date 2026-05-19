@@ -9,6 +9,8 @@ export default function Scanner() {
   const [success, setSuccess] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [note, setNote] = useState('');
+  const [manualCode, setManualCode] = useState('');
+  const [cameraError, setCameraError] = useState(false);
 
   async function handleScan(qrCode) {
     setScanning(false);
@@ -43,6 +45,8 @@ export default function Scanner() {
     setSuccess('');
     setDueDate('');
     setNote('');
+    setManualCode('');
+    setCameraError(false);
   }
 
   return (
@@ -63,7 +67,31 @@ export default function Scanner() {
         </div>
       )}
 
-      {scanning && !success && <QrScanner onScan={handleScan} onError={(e) => setError(e)} />}
+      {scanning && !success && (
+        <div>
+          {!cameraError && (
+            <QrScanner onScan={handleScan} onError={() => setCameraError(true)} />
+          )}
+
+          <div className="max-w-sm mx-auto mt-4 p-4 bg-gray-50 rounded">
+            <p className="text-sm text-gray-600 mb-2">
+              {cameraError ? 'ไม่สามารถเปิดกล้องได้ — ' : ''}พิมพ์รหัส QR Code แทน
+            </p>
+            <div className="flex gap-2">
+              <input
+                value={manualCode}
+                onChange={(e) => setManualCode(e.target.value)}
+                placeholder="รหัส QR Code"
+                className="border rounded px-3 py-2 flex-1"
+              />
+              <button
+                onClick={() => manualCode.trim() && handleScan(manualCode.trim())}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >ค้นหา</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {item && (
         <div className="bg-white rounded shadow p-4 max-w-sm mx-auto mt-4">

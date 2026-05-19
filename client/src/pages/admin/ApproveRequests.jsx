@@ -16,8 +16,7 @@ export default function ApproveRequests() {
   }
 
   async function approve(id) {
-    const dueDate = prompt('กำหนดคืน (YYYY-MM-DD, เว้นว่างถ้าไม่กำหนด):');
-    await api.put(`/borrows/${id}/approve`, dueDate ? { dueDate } : {});
+    await api.put(`/borrows/${id}/approve`);
     loadRequests();
   }
 
