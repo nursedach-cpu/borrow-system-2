@@ -1,10 +1,21 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const auth = require('../middleware/auth');
 const adminOnly = require('../middleware/adminOnly');
 const BorrowRecord = require('../models/BorrowRecord');
 const Item = require('../models/Item');
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '..', 'uploads'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `borrow-${Date.now()}${ext}`);
+  },
+});
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 router.post('/', auth, async (req, res) => {
   try {
@@ -126,6 +137,33 @@ router.put('/:id/return', auth, adminOnly, async (req, res) => {
       currentBorrow: null,
     });
 
+    res.json(record);
+  } catch (err) {
+    res.status(500).json({ error: 'เกิดข้อผิดพลาด' });
+  }
+});
+
+router.post('/:id/borrow-image', auth, upload.single('image'), async (req, res) => {
+  try {
+    const record = await BorrowRecord.findById(req.params.id);
+    if (!record) return res.status(404).json({ error: 'ไม่พบรายการ' });
+    if (record.borrower.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'ไม่มีสิทธิ์' });
+    }
+    record.borrowImage = `/uploads/${req.file.filename}`;
+    await record.save();
+    res.json(record);
+  } catch (err) {
+    res.status(500).json({ error: 'เกิดข้อผิดพลาด' });
+  }
+});
+
+router.post('/:id/return-image', auth, adminOnly, upload.single('image'), async (req, res) => {
+  try {
+    const record = await BorrowRecord.findById(req.params.id);
+    if (!record) return res.status(404).json({ error: 'ไม่พบรายการ' });
+    record.returnImage = `/uploads/${req.file.filename}`;
+    await record.save();
     res.json(record);
   } catch (err) {
     res.status(500).json({ error: 'เกิดข้อผิดพลาด' });

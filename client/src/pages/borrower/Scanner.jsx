@@ -11,6 +11,9 @@ export default function Scanner() {
   const [note, setNote] = useState('');
   const [manualCode, setManualCode] = useState('');
   const [cameraError, setCameraError] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleScan(qrCode) {
     setScanning(false);
@@ -23,18 +26,38 @@ export default function Scanner() {
     }
   }
 
+  function handlePhotoChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  }
+
   async function handleBorrow() {
     setError('');
+    setSubmitting(true);
     try {
-      await api.post('/borrows', {
+      const res = await api.post('/borrows', {
         itemId: item._id,
         dueDate: dueDate || undefined,
         note: note || undefined,
       });
+
+      if (photo) {
+        const formData = new FormData();
+        formData.append('image', photo);
+        await api.post(`/borrows/${res.data._id}/borrow-image`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
       setSuccess('ส่งคำขอยืมเรียบร้อย รออนุมัติ');
       setItem(null);
     } catch (err) {
       setError(err.response?.data?.error || 'ส่งคำขอไม่สำเร็จ');
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -47,6 +70,8 @@ export default function Scanner() {
     setNote('');
     setManualCode('');
     setCameraError(false);
+    setPhoto(null);
+    setPhotoPreview('');
   }
 
   return (
@@ -108,8 +133,20 @@ export default function Scanner() {
               <label className="block text-sm text-gray-700 mb-1">หมายเหตุ</label>
               <input value={note} onChange={(e) => setNote(e.target.value)}
                 className="border rounded px-3 py-2 w-full mb-3" placeholder="เช่น ใช้ในห้องประชุม A" />
-              <button onClick={handleBorrow}
-                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">ขอยืม</button>
+
+              <label className="block text-sm text-gray-700 mb-1">แนบรูปถ่าย (ไม่บังคับ)</label>
+              <input type="file" accept="image/*" capture="environment" onChange={handlePhotoChange}
+                className="block w-full text-sm text-gray-500 mb-2
+                  file:mr-2 file:py-2 file:px-3 file:rounded file:border-0
+                  file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200" />
+              {photoPreview && (
+                <img src={photoPreview} className="w-full h-32 object-cover rounded mb-3 border" />
+              )}
+
+              <button onClick={handleBorrow} disabled={submitting}
+                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50">
+                {submitting ? 'กำลังส่ง...' : 'ขอยืม'}
+              </button>
             </div>
           ) : (
             <div className="mt-3 text-yellow-600 font-medium">

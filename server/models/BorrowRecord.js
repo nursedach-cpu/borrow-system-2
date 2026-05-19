@@ -9,6 +9,8 @@ const borrowRecordSchema = new mongoose.Schema({
   returnDate: { type: Date },
   approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   note: { type: String, trim: true },
+  borrowImage: { type: String },
+  returnImage: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model('BorrowRecord', borrowRecordSchema);

@@ -4,6 +4,7 @@ import api from '../../api/client';
 export default function History() {
   const [records, setRecords] = useState([]);
   const [filter, setFilter] = useState('');
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => { loadRecords(); }, []);
 
@@ -41,6 +42,7 @@ export default function History() {
               <th className="text-left px-4 py-3">วันยืม</th>
               <th className="text-left px-4 py-3">กำหนดคืน</th>
               <th className="text-left px-4 py-3">วันคืน</th>
+              <th className="text-left px-4 py-3">รูปถ่าย</th>
             </tr>
           </thead>
           <tbody>
@@ -52,12 +54,48 @@ export default function History() {
                 <td className="px-4 py-3">{r.borrowDate ? new Date(r.borrowDate).toLocaleDateString('th-TH') : '-'}</td>
                 <td className="px-4 py-3">{r.dueDate ? new Date(r.dueDate).toLocaleDateString('th-TH') : '-'}</td>
                 <td className="px-4 py-3">{r.returnDate ? new Date(r.returnDate).toLocaleDateString('th-TH') : '-'}</td>
+                <td className="px-4 py-3">
+                  {(r.borrowImage || r.returnImage) ? (
+                    <button onClick={() => setExpandedId(expandedId === r._id ? null : r._id)}
+                      className="text-blue-600 underline text-xs">
+                      {expandedId === r._id ? 'ซ่อน' : 'ดูรูป'}
+                    </button>
+                  ) : '-'}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
         {filtered.length === 0 && <div className="text-center py-8 text-gray-400">ไม่พบประวัติ</div>}
       </div>
+
+      {expandedId && (() => {
+        const r = records.find((rec) => rec._id === expandedId);
+        if (!r) return null;
+        return (
+          <div className="mt-4 bg-white rounded shadow p-4 max-w-lg">
+            <h3 className="font-medium mb-3">{r.item?.name} — รูปถ่ายประกอบ</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="text-xs text-gray-500">รูปตอนยืม</span>
+                {r.borrowImage ? (
+                  <img src={r.borrowImage} className="w-full h-32 object-cover rounded border mt-1" />
+                ) : (
+                  <div className="text-xs text-gray-300 mt-1">ไม่มีรูป</div>
+                )}
+              </div>
+              <div>
+                <span className="text-xs text-gray-500">รูปตอนคืน</span>
+                {r.returnImage ? (
+                  <img src={r.returnImage} className="w-full h-32 object-cover rounded border mt-1" />
+                ) : (
+                  <div className="text-xs text-gray-300 mt-1">ไม่มีรูป</div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
