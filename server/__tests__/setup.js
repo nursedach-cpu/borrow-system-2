@@ -1,3 +1,6 @@
+// Ensure test mode is set before anything that reads NODE_ENV (rate limiter, auth cache, etc.)
+process.env.NODE_ENV = 'test';
+
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const createApp = require('../app');

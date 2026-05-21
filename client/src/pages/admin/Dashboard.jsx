@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import ItemBorrowStats from '../../components/ItemBorrowStats';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -45,6 +46,8 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      <ItemBorrowStats />
     </div>
   );
 }

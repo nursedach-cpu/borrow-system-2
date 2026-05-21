@@ -1,20 +1,26 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import BugReportButton from './BugReportButton';
 
 const adminLinks = [
   { to: '/admin', label: 'แดชบอร์ด' },
   { to: '/admin/items', label: 'จัดการอุปกรณ์' },
   { to: '/admin/approve', label: 'อนุมัติคำขอ' },
   { to: '/admin/returns', label: 'รับคืน' },
+  { to: '/admin/reservations', label: 'จัดการการจอง' },
   { to: '/admin/history', label: 'ประวัติ' },
   { to: '/admin/tracking', label: 'ติดตามอุปกรณ์' },
+  { to: '/admin/users', label: 'จัดการผู้ใช้' },
+  { to: '/admin/bug-reports', label: 'รายงานบั๊ก' },
 ];
 
 const borrowerLinks = [
   { to: '/borrower', label: 'สแกน QR' },
   { to: '/borrower/my-borrows', label: 'ของที่ยืมอยู่' },
-  { to: '/borrower/history', label: 'ประวัติของฉัน' },
+  { to: '/borrower/reservations', label: 'การจองของฉัน' },
   { to: '/borrower/requests', label: 'สถานะคำขอ' },
+  { to: '/borrower/history', label: 'ประวัติของฉัน' },
+  { to: '/borrower/bug-reports', label: 'บั๊กที่ฉันแจ้ง' },
 ];
 
 export default function Layout() {
@@ -59,6 +65,7 @@ export default function Layout() {
       <main className="flex-1 p-6 overflow-auto">
         <Outlet />
       </main>
+      <BugReportButton />
     </div>
   );
 }
