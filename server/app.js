@@ -70,6 +70,16 @@ function createApp() {
     res.status(404).json({ error: 'ไม่พบ endpoint นี้' });
   });
 
+  // ---- Serve React frontend in production ----
+  if (process.env.NODE_ENV === 'production') {
+    const clientDist = path.join(__dirname, '../client/dist');
+    app.use(express.static(clientDist));
+    // SPA catch-all: serve index.html for any non-API route
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(clientDist, 'index.html'));
+    });
+  }
+
   // ---- Centralized error handler (must be last) ----
   app.use(errorHandler);
 
