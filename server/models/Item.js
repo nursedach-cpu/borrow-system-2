@@ -6,6 +6,7 @@ const itemSchema = new mongoose.Schema({
   category: { type: String, trim: true },
   qrCode: { type: String, required: true, unique: true },
   status: { type: String, enum: ['available', 'borrowed', 'maintenance'], default: 'available' },
+  weight: { type: Number, default: 0, min: 0 },
   imageUrl: { type: String },
   currentBorrow: { type: mongoose.Schema.Types.ObjectId, ref: 'BorrowRecord', default: null },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

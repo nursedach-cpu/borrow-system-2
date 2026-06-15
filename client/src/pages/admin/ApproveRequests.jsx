@@ -43,6 +43,11 @@ export default function ApproveRequests() {
               <div className="text-sm text-gray-500">
                 ผู้ขอ: {r.borrower?.name} ({r.borrower?.department || '-'})
               </div>
+              {r.item?.weight > 0 && (
+                <div className="text-sm text-indigo-600">
+                  น้ำหนักอุปกรณ์: {r.item.weight} kg
+                </div>
+              )}
               {r.dueDate && (
                 <div className="text-sm text-gray-500">
                   กำหนดคืน: {new Date(r.dueDate).toLocaleDateString('th-TH')}

@@ -7,12 +7,22 @@ export default function MyBorrows() {
   const [newDate, setNewDate] = useState('');
   const [extendNote, setExtendNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [weightInfo, setWeightInfo] = useState(null);
 
-  useEffect(() => { loadBorrows(); }, []);
+  useEffect(() => { loadBorrows(); loadWeight(); }, []);
 
   async function loadBorrows() {
     const res = await api.get('/borrows/my');
     setBorrows(res.data.filter((r) => r.status === 'approved'));
+  }
+
+  async function loadWeight() {
+    try {
+      const res = await api.get('/users/me/weight');
+      setWeightInfo(res.data);
+    } catch {
+      // weight info is non-critical
+    }
   }
 
   function openExtend(record) {
@@ -52,6 +62,27 @@ export default function MyBorrows() {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">ของที่ยืมอยู่</h2>
+
+      {weightInfo && (
+        <div className="bg-white rounded shadow p-4 mb-4">
+          <div className="flex justify-between items-center mb-1 text-sm font-medium text-gray-700">
+            <span>น้ำหนักที่ยืมอยู่</span>
+            <span className={weightInfo.currentWeight >= weightInfo.weightLimit ? 'text-red-600' : 'text-gray-600'}>
+              {weightInfo.currentWeight.toFixed(2)} / {weightInfo.weightLimit} kg
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <div
+              className={`h-3 rounded-full transition-all ${
+                weightInfo.currentWeight >= weightInfo.weightLimit ? 'bg-red-500' :
+                weightInfo.currentWeight / weightInfo.weightLimit > 0.8 ? 'bg-yellow-400' : 'bg-green-500'
+              }`}
+              style={{ width: `${Math.min((weightInfo.currentWeight / weightInfo.weightLimit) * 100, 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {borrows.map((r) => {
           const overdue = r.dueDate && new Date(r.dueDate) < new Date();

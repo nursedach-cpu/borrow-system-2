@@ -6,6 +6,7 @@ const { ApiError } = require('../middleware/errorHandler');
 const { upload, getPublicUrl } = require('../config/upload');
 const BorrowRecord = require('../models/BorrowRecord');
 const Item = require('../models/Item');
+const User = require('../models/User');
 const Reservation = require('../models/Reservation');
 const {
   ROLES,
@@ -40,6 +41,19 @@ router.post(
       throw new ApiError(400, 'คุณมีคำขอยืมรายการนี้รออนุมัติอยู่แล้ว');
     }
 
+    const borrower = await User.findById(req.user._id);
+    const activeBorrows = await BorrowRecord.find({
+      borrower: req.user._id,
+      status: BORROW_STATUS.APPROVED,
+    }).populate('item', 'weight');
+    const currentWeight = activeBorrows.reduce((sum, b) => sum + (b.item?.weight || 0), 0);
+    if (currentWeight + (item.weight || 0) > borrower.weightLimit) {
+      throw new ApiError(
+        400,
+        `น้ำหนักรวมเกินขีดจำกัด (${(currentWeight + (item.weight || 0)).toFixed(2)} kg / ${borrower.weightLimit} kg)`
+      );
+    }
+
     const record = await BorrowRecord.create({
       item: itemId,
       borrower: req.user._id,
@@ -72,8 +86,8 @@ router.get(
       filter.status = req.query.status;
     }
     const records = await BorrowRecord.find(filter)
-      .populate('item', 'name qrCode status imageUrl')
-      .populate('borrower', 'name email department')
+      .populate('item', 'name qrCode status imageUrl weight')
+      .populate('borrower', 'name email department weightLimit')
       .populate('approvedBy', 'name')
       .sort({ createdAt: -1 });
     res.json(records);

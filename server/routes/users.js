@@ -4,7 +4,8 @@ const adminOnly = require('../middleware/adminOnly');
 const asyncHandler = require('../middleware/asyncHandler');
 const { ApiError } = require('../middleware/errorHandler');
 const User = require('../models/User');
-const { ROLES } = require('../constants');
+const BorrowRecord = require('../models/BorrowRecord');
+const { ROLES, BORROW_STATUS } = require('../constants');
 
 const router = express.Router();
 
@@ -43,6 +44,41 @@ router.put(
     }
 
     res.json(user);
+  })
+);
+
+router.put(
+  '/:id/weight-limit',
+  auth,
+  adminOnly,
+  asyncHandler(async (req, res) => {
+    const { weightLimit } = req.body;
+    if (weightLimit == null || isNaN(weightLimit) || Number(weightLimit) < 0) {
+      throw new ApiError(400, 'weightLimit ไม่ถูกต้อง');
+    }
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { weightLimit: Number(weightLimit) },
+      { new: true, select: '-password' }
+    );
+    if (!user) {
+      throw new ApiError(404, 'ไม่พบผู้ใช้');
+    }
+    res.json(user);
+  })
+);
+
+router.get(
+  '/me/weight',
+  auth,
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id, 'weightLimit');
+    const activeBorrows = await BorrowRecord.find({
+      borrower: req.user._id,
+      status: BORROW_STATUS.APPROVED,
+    }).populate('item', 'weight');
+    const currentWeight = activeBorrows.reduce((sum, b) => sum + (b.item?.weight || 0), 0);
+    res.json({ weightLimit: user.weightLimit, currentWeight });
   })
 );
 

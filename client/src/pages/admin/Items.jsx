@@ -5,7 +5,7 @@ export default function Items() {
   const [items, setItems] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [form, setForm] = useState({ name: '', description: '', category: '' });
+  const [form, setForm] = useState({ name: '', description: '', category: '', weight: '' });
 
   useEffect(() => { loadItems(); }, []);
 
@@ -27,13 +27,13 @@ export default function Items() {
     }
     setShowForm(false);
     setEditItem(null);
-    setForm({ name: '', description: '', category: '' });
+    setForm({ name: '', description: '', category: '', weight: '' });
     loadItems();
   }
 
   function startEdit(item) {
     setEditItem(item);
-    setForm({ name: item.name, description: item.description || '', category: item.category || '' });
+    setForm({ name: item.name, description: item.description || '', category: item.category || '', weight: item.weight != null ? String(item.weight) : '' });
     setShowForm(true);
   }
 
@@ -82,13 +82,15 @@ export default function Items() {
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow mb-4">
           <h3 className="font-medium mb-3">{editItem ? 'แก้ไข' : 'เพิ่ม'}อุปกรณ์</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
             <input name="name" placeholder="ชื่อ *" value={form.name} onChange={onChange}
               className="border rounded px-3 py-2" required />
             <input name="category" placeholder="หมวดหมู่" value={form.category} onChange={onChange}
               className="border rounded px-3 py-2" />
             <input name="description" placeholder="รายละเอียด" value={form.description} onChange={onChange}
               className="border rounded px-3 py-2" />
+            <input name="weight" type="number" placeholder="น้ำหนัก (kg)" value={form.weight} onChange={onChange}
+              min="0" step="0.01" className="border rounded px-3 py-2" />
           </div>
           <div className="flex gap-2">
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded text-sm">บันทึก</button>
@@ -104,6 +106,7 @@ export default function Items() {
             <tr>
               <th className="text-left px-4 py-3">ชื่อ</th>
               <th className="text-left px-4 py-3">หมวดหมู่</th>
+              <th className="text-left px-4 py-3">น้ำหนัก</th>
               <th className="text-left px-4 py-3">สถานะ</th>
               <th className="text-left px-4 py-3">QR Code</th>
               <th className="text-left px-4 py-3">จัดการ</th>
@@ -119,6 +122,9 @@ export default function Items() {
                   </div>
                 </td>
                 <td className="px-4 py-3">{item.category || '-'}</td>
+                <td className="px-4 py-3 text-gray-600">
+                  {item.weight ? `${item.weight} kg` : '-'}
+                </td>
                 <td className={`px-4 py-3 font-medium ${statusColor[item.status]}`}>
                   {statusLabel[item.status]}
                 </td>

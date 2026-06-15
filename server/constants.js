@@ -56,4 +56,7 @@ module.exports = {
     MAX_FILE_SIZE: 5 * 1024 * 1024, // 5 MB
     ALLOWED_MIME: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
   },
+  WEIGHT: {
+    DEFAULT_LIMIT: 10, // kg per user
+  },
 };

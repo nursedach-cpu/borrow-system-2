@@ -32,7 +32,7 @@ router.post(
   auth,
   adminOnly,
   asyncHandler(async (req, res) => {
-    const { name, description, category } = req.body;
+    const { name, description, category, weight } = req.body;
     if (!name) {
       throw new ApiError(400, 'กรุณาระบุชื่อของ');
     }
@@ -41,6 +41,7 @@ router.post(
       name,
       description,
       category,
+      weight: weight != null ? Number(weight) : 0,
       qrCode: uuidv4(),
       createdBy: req.user._id,
     });
@@ -53,10 +54,12 @@ router.put(
   auth,
   adminOnly,
   asyncHandler(async (req, res) => {
-    const { name, description, category, status } = req.body;
+    const { name, description, category, status, weight } = req.body;
+    const update = { name, description, category, status };
+    if (weight != null) update.weight = Number(weight);
     const item = await Item.findByIdAndUpdate(
       req.params.id,
-      { name, description, category, status },
+      update,
       { new: true, runValidators: true }
     );
     if (!item) {
