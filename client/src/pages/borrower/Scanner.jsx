@@ -20,6 +20,11 @@ export default function Scanner() {
   const [mode, setMode] = useState('borrow'); // 'borrow' | 'queue' | 'schedule'
   const [scheduleStart, setScheduleStart] = useState('');
   const [scheduleEnd, setScheduleEnd] = useState('');
+  const [weightInfo, setWeightInfo] = useState(null);
+
+  useEffect(() => {
+    api.get('/users/me/weight').then((res) => setWeightInfo(res.data)).catch(() => {});
+  }, []);
 
   // Load queue count whenever a borrowed item is loaded.
   useEffect(() => {
@@ -184,6 +189,54 @@ export default function Scanner() {
           <h3 className="font-bold text-lg">{item.name}</h3>
           {item.category && <div className="text-sm text-gray-500">{item.category}</div>}
           {item.description && <div className="text-sm text-gray-600 mt-1">{item.description}</div>}
+
+          {/* Weight info block */}
+          {weightInfo && (
+            <div className="mt-3 bg-gray-50 rounded p-3 text-sm">
+              {item.weight > 0 && (
+                <div className="flex justify-between mb-2 text-gray-700">
+                  <span>น้ำหนักอุปกรณ์นี้</span>
+                  <span className="font-medium">{item.weight} kg</span>
+                </div>
+              )}
+              <div className="flex justify-between mb-1 text-gray-700">
+                <span>น้ำหนักฉันตอนนี้</span>
+                <span className={
+                  weightInfo.currentWeight + (item.weight || 0) > weightInfo.weightLimit
+                    ? 'font-medium text-red-600'
+                    : 'font-medium text-gray-700'
+                }>
+                  {weightInfo.currentWeight.toFixed(2)} kg
+                  {item.weight > 0 && (
+                    <span className="text-gray-400"> + {item.weight} = {(weightInfo.currentWeight + item.weight).toFixed(2)} kg</span>
+                  )}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                <div
+                  className={`h-2 rounded-full transition-all ${
+                    weightInfo.currentWeight + (item.weight || 0) > weightInfo.weightLimit
+                      ? 'bg-red-500'
+                      : (weightInfo.currentWeight + (item.weight || 0)) / weightInfo.weightLimit > 0.8
+                        ? 'bg-yellow-400'
+                        : 'bg-green-500'
+                  }`}
+                  style={{
+                    width: `${Math.min(
+                      ((weightInfo.currentWeight + (item.weight || 0)) / weightInfo.weightLimit) * 100,
+                      100
+                    )}%`,
+                  }}
+                />
+              </div>
+              <div className="text-right text-xs text-gray-400">ขีดจำกัด {weightInfo.weightLimit} kg</div>
+              {weightInfo.currentWeight + (item.weight || 0) > weightInfo.weightLimit && (
+                <div className="mt-2 text-xs text-red-600 font-medium">
+                  น้ำหนักจะเกินขีดจำกัด — ไม่สามารถยืมได้
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Status banner */}
           <div className={`mt-3 px-3 py-2 rounded text-sm font-medium ${
