@@ -18,6 +18,24 @@ const router = express.Router();
 
 // --- Helpers ---
 
+// Returns the set of item _ids a dept-scoped admin is allowed to act on
+// (their department's items + shared/null-department items). Returns null
+// for super admins, meaning "no restriction".
+async function scopedItemIds(user) {
+  if (user.role !== ROLES.ADMIN || !user.department) return null;
+  return Item.find({
+    $or: [{ ownerDepartment: user.department }, { ownerDepartment: null }],
+  }).distinct('_id');
+}
+
+// Throw 403 if a dept admin tries to act on a reservation outside their scope.
+async function assertReservationInScope(reservation, user) {
+  const ids = await scopedItemIds(user);
+  if (!ids) return; // super admin
+  const allowed = ids.some((id) => id.toString() === reservation.item.toString());
+  if (!allowed) throw new ApiError(403, 'คุณจัดการได้เฉพาะการจองของแผนกคุณ');
+}
+
 function parseDate(value, fieldName) {
   if (!value) throw new ApiError(400, `กรุณาระบุ ${fieldName}`);
   const d = new Date(value);
@@ -199,6 +217,10 @@ router.get(
     if (req.query.status) filter.status = req.query.status;
     if (req.query.itemId) filter.item = req.query.itemId;
 
+    // Dept-scoped admins only see reservations for items in their scope.
+    const ids = await scopedItemIds(req.user);
+    if (ids) filter.item = { $in: ids };
+
     const records = await Reservation.find(filter)
       .populate('item', 'name qrCode status imageUrl')
       .populate('user', 'name email department')
@@ -246,6 +268,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const reservation = await Reservation.findById(req.params.id);
     if (!reservation) throw new ApiError(404, 'ไม่พบการจอง');
+    await assertReservationInScope(reservation, req.user);
     if (reservation.status !== RESERVATION_STATUS.PENDING) {
       throw new ApiError(400, 'การจองนี้ไม่ได้อยู่ในสถานะรออนุมัติ');
     }
@@ -277,6 +300,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const reservation = await Reservation.findById(req.params.id);
     if (!reservation) throw new ApiError(404, 'ไม่พบการจอง');
+    await assertReservationInScope(reservation, req.user);
     if (reservation.status !== RESERVATION_STATUS.PENDING) {
       throw new ApiError(400, 'การจองนี้ไม่ได้อยู่ในสถานะรออนุมัติ');
     }

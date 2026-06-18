@@ -121,7 +121,9 @@ router.put(
     }
     await record.save();
 
-    await Item.findByIdAndUpdate(record.item, {
+    // record.item is populated (loadAuthorizedRecord); use its _id explicitly.
+    const itemId = record.item._id || record.item;
+    await Item.findByIdAndUpdate(itemId, {
       status: ITEM_STATUS.BORROWED,
       currentBorrow: record._id,
     });
@@ -161,7 +163,8 @@ router.put(
     record.returnDate = new Date();
     await record.save();
 
-    await Item.findByIdAndUpdate(record.item, {
+    const itemId = record.item._id || record.item;
+    await Item.findByIdAndUpdate(itemId, {
       status: ITEM_STATUS.AVAILABLE,
       currentBorrow: null,
     });
@@ -170,7 +173,7 @@ router.put(
     // We mark them fulfilled so the borrower UI can show "ถึงคิวคุณแล้ว"
     // and they can then submit a normal borrow request.
     const nextInQueue = await Reservation.findOne({
-      item: record.item,
+      item: itemId,
       type: RESERVATION_TYPE.QUEUE,
       status: RESERVATION_STATUS.APPROVED,
     }).sort({ createdAt: 1 });

@@ -99,8 +99,8 @@ router.get(
     ]);
     const queueMap = new Map(queueAgg.map((r) => [r._id.toString(), r.queueCount]));
 
-    // Load items with current borrower populated.
-    const items = await Item.find({ isDeleted: false })
+    // Load items with current borrower populated — scoped to the admin's department.
+    const items = await Item.find({ isDeleted: false, ...itemDeptFilter(req.user) })
       .populate({
         path: 'currentBorrow',
         populate: { path: 'borrower', select: 'name department' },
@@ -115,6 +115,7 @@ router.get(
         _id: id,
         name: item.name,
         category: item.category || null,
+        ownerDepartment: item.ownerDepartment || null,
         imageUrl: item.imageUrl || null,
         qrCode: item.qrCode,
         status: item.status,
@@ -158,6 +159,10 @@ router.get(
   auth,
   adminOnly,
   asyncHandler(async (req, res) => {
+    // Dept admins may only inspect history of items within their scope.
+    const item = await Item.findOne({ _id: req.params.id, ...itemDeptFilter(req.user) });
+    if (!item) return res.status(404).json({ error: 'ไม่พบรายการ หรือไม่อยู่ในแผนกของคุณ' });
+
     const records = await BorrowRecord.find({ item: req.params.id })
       .populate('borrower', 'name email department')
       .populate('approvedBy', 'name')
