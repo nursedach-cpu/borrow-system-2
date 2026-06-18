@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { DEPARTMENTS } from '../constants/departments';
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', department: '', phone: '' });
@@ -54,7 +55,12 @@ export default function Register() {
           </label>
           <label className="block mb-3">
             <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">แผนก</span>
-            <input name="department" value={form.department} onChange={onChange} className="notion-input mt-1.5" />
+            <select name="department" value={form.department} onChange={onChange} className="notion-input mt-1.5">
+              <option value="">— ไม่สังกัด (คนนอก) —</option>
+              {DEPARTMENTS.map((d) => (
+                <option key={d.code} value={d.code}>{d.code} — {d.name}</option>
+              ))}
+            </select>
           </label>
           <label className="block mb-5">
             <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">เบอร์โทร</span>

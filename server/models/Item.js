@@ -6,6 +6,8 @@ const itemSchema = new mongoose.Schema({
   category: { type: String, trim: true },
   qrCode: { type: String, required: true, unique: true },
   status: { type: String, enum: ['available', 'borrowed', 'maintenance'], default: 'available' },
+  // Department that owns this item. null = general/shared equipment that anyone can borrow.
+  ownerDepartment: { type: String, default: null, index: true },
   imageUrl: { type: String },
   currentBorrow: { type: mongoose.Schema.Types.ObjectId, ref: 'BorrowRecord', default: null },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

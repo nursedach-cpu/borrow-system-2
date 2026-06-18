@@ -14,32 +14,42 @@ const {
 
 const router = express.Router();
 
+// Dept admin scope: their dept's items + shared (null-dept) items.
+function itemDeptFilter(user) {
+  if (user.role === 'admin' && user.department) {
+    return { $or: [{ ownerDepartment: user.department }, { ownerDepartment: null }] };
+  }
+  return {};
+}
+
 router.get(
   '/stats',
   auth,
   adminOnly,
   asyncHandler(async (req, res) => {
+    const itemBase = { isDeleted: false, ...itemDeptFilter(req.user) };
+
+    let borrowFilter = {};
+    if (req.user.department) {
+      const scopedIds = await Item.find(itemBase).distinct('_id');
+      borrowFilter.item = { $in: scopedIds };
+    }
+
     const [totalItems, available, borrowed, maintenance, pendingRequests, overdueItems] =
       await Promise.all([
-        Item.countDocuments({ isDeleted: false }),
-        Item.countDocuments({ isDeleted: false, status: ITEM_STATUS.AVAILABLE }),
-        Item.countDocuments({ isDeleted: false, status: ITEM_STATUS.BORROWED }),
-        Item.countDocuments({ isDeleted: false, status: ITEM_STATUS.MAINTENANCE }),
-        BorrowRecord.countDocuments({ status: BORROW_STATUS.PENDING }),
+        Item.countDocuments(itemBase),
+        Item.countDocuments({ ...itemBase, status: ITEM_STATUS.AVAILABLE }),
+        Item.countDocuments({ ...itemBase, status: ITEM_STATUS.BORROWED }),
+        Item.countDocuments({ ...itemBase, status: ITEM_STATUS.MAINTENANCE }),
+        BorrowRecord.countDocuments({ ...borrowFilter, status: BORROW_STATUS.PENDING }),
         BorrowRecord.countDocuments({
+          ...borrowFilter,
           status: BORROW_STATUS.APPROVED,
           dueDate: { $lt: new Date(), $ne: null },
         }),
       ]);
 
-    res.json({
-      totalItems,
-      available,
-      borrowed,
-      maintenance,
-      pendingRequests,
-      overdueItems,
-    });
+    res.json({ totalItems, available, borrowed, maintenance, pendingRequests, overdueItems });
   })
 );
 

@@ -6,7 +6,9 @@ const auth = require('../middleware/auth');
 const asyncHandler = require('../middleware/asyncHandler');
 const { authLimiter } = require('../middleware/rateLimiter');
 const { ApiError } = require('../middleware/errorHandler');
-const { ROLES, PASSWORD } = require('../constants');
+const { ROLES, PASSWORD, DEPARTMENTS } = require('../constants');
+
+const VALID_DEPT_CODES = DEPARTMENTS.map((d) => d.code);
 
 const router = express.Router();
 
@@ -49,6 +51,15 @@ router.post(
     assertValidEmail(email);
     assertStrongPassword(password);
 
+    // Department is optional (outsiders register without one), but if provided it must be valid.
+    let normalizedDept = null;
+    if (department && department !== '') {
+      if (!VALID_DEPT_CODES.includes(department)) {
+        throw new ApiError(400, 'แผนกที่ระบุไม่ถูกต้อง');
+      }
+      normalizedDept = department;
+    }
+
     const existing = await User.findOne({ email: email.toLowerCase() });
     if (existing) {
       throw new ApiError(400, 'อีเมลนี้ถูกใช้งานแล้ว');
@@ -60,7 +71,7 @@ router.post(
       email,
       password: hashed,
       role: ROLES.BORROWER,
-      department,
+      department: normalizedDept,
       phone,
     });
 

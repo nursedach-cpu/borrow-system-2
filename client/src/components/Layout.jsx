@@ -61,7 +61,9 @@ export default function Layout() {
               <div className="text-sm font-medium text-[#37352f] truncate">{user.name}</div>
               <div className="text-xs text-[#787774] flex items-center gap-1">
                 {isAdmin ? <ShieldCheck size={11} /> : <User size={11} />}
-                {isAdmin ? 'ผู้ดูแล' : 'ผู้ยืม'}
+                {isAdmin
+                  ? (user.department ? `Admin ${user.department}` : 'Super Admin')
+                  : (user.department ? `ผู้ยืม · ${user.department}` : 'ผู้ยืม (คนนอก)')}
               </div>
             </div>
           </div>

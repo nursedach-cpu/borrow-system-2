@@ -17,6 +17,20 @@ const {
 
 const router = express.Router();
 
+// Dept-scoped admins may only act on records of items they own (or shared items).
+// Returns the record once authorized, otherwise throws.
+async function loadAuthorizedRecord(id, user) {
+  const record = await BorrowRecord.findById(id).populate('item', 'ownerDepartment');
+  if (!record) return null;
+  if (user.department && record.item) {
+    const itemDept = record.item.ownerDepartment;
+    if (itemDept && itemDept !== user.department) {
+      throw new ApiError(403, 'คุณจัดการได้เฉพาะคำขอของแผนกคุณ');
+    }
+  }
+  return record;
+}
+
 router.post(
   '/',
   auth,
@@ -68,11 +82,20 @@ router.get(
   adminOnly,
   asyncHandler(async (req, res) => {
     const filter = {};
-    if (req.query.status) {
-      filter.status = req.query.status;
+    if (req.query.status) filter.status = req.query.status;
+
+    // Dept-scoped admin only sees borrows of items owned by their dept
+    // (we include shared / no-department items too, since they touch everyone).
+    if (req.user.department) {
+      const Item = require('../models/Item');
+      const scopedItemIds = await Item.find({
+        $or: [{ ownerDepartment: req.user.department }, { ownerDepartment: null }],
+      }).distinct('_id');
+      filter.item = { $in: scopedItemIds };
     }
+
     const records = await BorrowRecord.find(filter)
-      .populate('item', 'name qrCode status imageUrl')
+      .populate('item', 'name qrCode status imageUrl ownerDepartment')
       .populate('borrower', 'name email department')
       .populate('approvedBy', 'name')
       .sort({ createdAt: -1 });
@@ -85,7 +108,7 @@ router.put(
   auth,
   adminOnly,
   asyncHandler(async (req, res) => {
-    const record = await BorrowRecord.findById(req.params.id);
+    const record = await loadAuthorizedRecord(req.params.id, req.user);
     if (!record || record.status !== BORROW_STATUS.PENDING) {
       throw new ApiError(400, 'ไม่พบคำขอ หรือคำขอไม่ได้อยู่ในสถานะรออนุมัติ');
     }
@@ -112,7 +135,7 @@ router.put(
   auth,
   adminOnly,
   asyncHandler(async (req, res) => {
-    const record = await BorrowRecord.findById(req.params.id);
+    const record = await loadAuthorizedRecord(req.params.id, req.user);
     if (!record || record.status !== BORROW_STATUS.PENDING) {
       throw new ApiError(400, 'ไม่พบคำขอ หรือคำขอไม่ได้อยู่ในสถานะรออนุมัติ');
     }
@@ -129,7 +152,7 @@ router.put(
   auth,
   adminOnly,
   asyncHandler(async (req, res) => {
-    const record = await BorrowRecord.findById(req.params.id);
+    const record = await loadAuthorizedRecord(req.params.id, req.user);
     if (!record || record.status !== BORROW_STATUS.APPROVED) {
       throw new ApiError(400, 'ไม่พบคำขอ หรือคำขอไม่ได้อยู่ในสถานะยืมอยู่');
     }

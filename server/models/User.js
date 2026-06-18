@@ -5,7 +5,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['admin', 'borrower'], default: 'borrower' },
-  department: { type: String, trim: true },
+  // For borrowers: which department they belong to (null = outsider, no department).
+  // For admins: same — non-null restricts them to manage only that department's items
+  //   (department-scoped admin). null = super admin (sees everything).
+  department: { type: String, trim: true, default: null },
   phone: { type: String, trim: true },
 }, { timestamps: true });
 

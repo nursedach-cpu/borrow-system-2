@@ -56,4 +56,14 @@ module.exports = {
     MAX_FILE_SIZE: 5 * 1024 * 1024, // 5 MB
     ALLOWED_MIME: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
   },
+  // Department codes used throughout the system. Items, users, and admins
+  // can be tagged with one of these. `null` department = general/no affiliation.
+  DEPARTMENTS: [
+    { code: 'ผบร', name: 'แผนกบำรุงรักษาระบบไฟฟ้า' },
+    { code: 'ผฮล', name: 'แผนกฮอทไลน์' },
+    { code: 'ผบส', name: 'แผนกบำรุงรักษาระบบสายส่ง' },
+    { code: 'ผบอ', name: 'แผนกบำรุงรักษาอุปกรณ์ไฟฟ้า' },
+    { code: 'ผมล', name: 'แผนกหม้อแปลงระบบจำหน่าย' },
+    { code: 'กบษ.ก3', name: 'กบษ.(ก3)' },
+  ],
 };
