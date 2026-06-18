@@ -8,6 +8,7 @@ export const DEPARTMENTS = [
   { code: 'ผบอ', name: 'แผนกบำรุงรักษาอุปกรณ์ไฟฟ้า' },
   { code: 'ผมล', name: 'แผนกหม้อแปลงระบบจำหน่าย' },
   { code: 'กบษ.ก3', name: 'กบษ.(ก3)' },
+  { code: 'กฟก.3', name: 'กฟก.3' },
 ];
 
 export function departmentName(code) {
