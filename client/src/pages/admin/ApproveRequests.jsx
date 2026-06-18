@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import { CheckCircle2, XCircle, Inbox, Calendar, User } from 'lucide-react';
 
 export default function ApproveRequests() {
   const [requests, setRequests] = useState([]);
@@ -27,38 +28,53 @@ export default function ApproveRequests() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">
-        อนุมัติคำขอยืม
-        {requests.length > 0 && (
-          <span className="ml-2 bg-orange-500 text-white text-sm px-2 py-0.5 rounded-full">
-            {requests.length}
-          </span>
-        )}
-      </h2>
-      <div className="space-y-3">
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <h1 className="text-3xl font-bold text-[#37352f]">อนุมัติคำขอยืม</h1>
+          {requests.length > 0 && (
+            <span className="badge bg-orange-50 text-[#d9730d] text-sm">{requests.length}</span>
+          )}
+        </div>
+        <p className="text-sm text-[#787774]">รายการคำขอยืมที่รออนุมัติ</p>
+      </div>
+
+      <div className="space-y-2">
         {requests.map((r) => (
-          <div key={r._id} className="bg-white rounded shadow p-4 flex justify-between items-center">
-            <div>
-              <div className="font-medium">{r.item?.name || 'ไม่ทราบ'}</div>
-              <div className="text-sm text-gray-500">
-                ผู้ขอ: {r.borrower?.name} ({r.borrower?.department || '-'})
-              </div>
-              {r.dueDate && (
-                <div className="text-sm text-gray-500">
-                  กำหนดคืน: {new Date(r.dueDate).toLocaleDateString('th-TH')}
+          <div key={r._id} className="notion-card hover:border-[#d3d3d0] transition-colors">
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1">
+                <div className="font-semibold text-[#37352f] mb-1">{r.item?.name || 'ไม่ทราบ'}</div>
+                <div className="flex items-center gap-1 text-sm text-[#787774]">
+                  <User size={13} />
+                  {r.borrower?.name} <span className="text-[#aeacaa]">·</span> {r.borrower?.department || '-'}
                 </div>
-              )}
-              {r.note && <div className="text-sm text-gray-400">หมายเหตุ: {r.note}</div>}
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => approve(r._id)}
-                className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">อนุมัติ</button>
-              <button onClick={() => reject(r._id)}
-                className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">ปฏิเสธ</button>
+                {r.dueDate && (
+                  <div className="flex items-center gap-1 text-sm text-[#787774] mt-1">
+                    <Calendar size={13} />
+                    กำหนดคืน: {new Date(r.dueDate).toLocaleDateString('th-TH')}
+                  </div>
+                )}
+                {r.note && <div className="text-sm text-[#787774] mt-1">หมายเหตุ: {r.note}</div>}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => approve(r._id)}
+                  className="inline-flex items-center gap-1 bg-[#0f7b6c] text-white px-3 py-1.5 rounded-md text-sm font-medium hover:bg-[#0d6b5e]">
+                  <CheckCircle2 size={14} /> อนุมัติ
+                </button>
+                <button onClick={() => reject(r._id)}
+                  className="inline-flex items-center gap-1 border border-[#e9e9e7] text-[#e03e3e] px-3 py-1.5 rounded-md text-sm font-medium hover:bg-red-50">
+                  <XCircle size={14} /> ปฏิเสธ
+                </button>
+              </div>
             </div>
           </div>
         ))}
-        {requests.length === 0 && <div className="text-gray-400 text-center py-8">ไม่มีคำขอรออนุมัติ</div>}
+        {requests.length === 0 && (
+          <div className="text-center py-12 text-[#787774]">
+            <Inbox size={32} className="mx-auto mb-2 opacity-40" />
+            <div className="text-sm">ไม่มีคำขอรออนุมัติ</div>
+          </div>
+        )}
       </div>
     </div>
   );

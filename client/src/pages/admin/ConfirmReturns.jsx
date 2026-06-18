@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import { Camera, CheckCircle2, AlertTriangle, Inbox, Calendar, User } from 'lucide-react';
 
 export default function ConfirmReturns() {
   const [borrows, setBorrows] = useState([]);
@@ -45,52 +46,61 @@ export default function ConfirmReturns() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">รับคืนอุปกรณ์</h2>
-      <div className="space-y-3">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[#37352f] mb-1">รับคืนอุปกรณ์</h1>
+        <p className="text-sm text-[#787774]">รายการอุปกรณ์ที่ถูกยืมอยู่ พร้อมรับคืน</p>
+      </div>
+
+      <div className="space-y-2">
         {borrows.map((r) => (
-          <div key={r._id} className={`bg-white rounded shadow p-4 ${
-            isOverdue(r.dueDate) ? 'border-l-4 border-red-500' : ''
-          }`}>
-            <div className="flex justify-between items-start">
-              <div>
-                <div className="font-medium">{r.item?.name || 'ไม่ทราบ'}</div>
-                <div className="text-sm text-gray-500">ผู้ยืม: {r.borrower?.name}</div>
-                <div className="text-sm text-gray-500">
-                  ยืมตั้งแต่: {new Date(r.borrowDate).toLocaleDateString('th-TH')}
+          <div key={r._id} className={`notion-card ${isOverdue(r.dueDate) ? 'border-l-4 border-l-[#e03e3e]' : ''}`}>
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1">
+                <div className="font-semibold text-[#37352f] mb-1">{r.item?.name || 'ไม่ทราบ'}</div>
+                <div className="flex items-center gap-1 text-sm text-[#787774]">
+                  <User size={13} /> ผู้ยืม: {r.borrower?.name}
+                </div>
+                <div className="flex items-center gap-1 text-sm text-[#787774] mt-1">
+                  <Calendar size={13} /> ยืม: {new Date(r.borrowDate).toLocaleDateString('th-TH')}
                 </div>
                 {r.dueDate && (
-                  <div className={`text-sm ${isOverdue(r.dueDate) ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
+                  <div className={`flex items-center gap-1 text-sm mt-1 ${isOverdue(r.dueDate) ? 'text-[#e03e3e] font-medium' : 'text-[#787774]'}`}>
+                    {isOverdue(r.dueDate) ? <AlertTriangle size={13} /> : <Calendar size={13} />}
                     กำหนดคืน: {new Date(r.dueDate).toLocaleDateString('th-TH')}
                     {isOverdue(r.dueDate) && ' (เกินกำหนด!)'}
                   </div>
                 )}
                 {r.borrowImage && (
                   <div className="mt-2">
-                    <span className="text-xs text-gray-400">รูปตอนยืม:</span>
-                    <img src={r.borrowImage} className="w-24 h-16 object-cover rounded mt-1 border" />
+                    <span className="text-xs text-[#aeacaa]">รูปตอนยืม:</span>
+                    <img src={r.borrowImage} className="w-24 h-16 object-cover rounded mt-1 border border-[#e9e9e7]" />
                   </div>
                 )}
               </div>
               <div className="flex flex-col items-end gap-2 ml-4">
-                <label className="text-xs text-gray-500 cursor-pointer">
-                  <span className="bg-gray-100 px-2 py-1 rounded text-gray-700 hover:bg-gray-200">
-                    แนบรูปคืน
-                  </span>
+                <label className="btn-secondary cursor-pointer">
+                  <Camera size={14} /> แนบรูปคืน
                   <input type="file" accept="image/*" capture="environment" className="hidden"
                     onChange={(e) => handlePhotoChange(r._id, e)} />
                 </label>
                 {photoPreviews[r._id] && (
-                  <img src={photoPreviews[r._id]} className="w-20 h-14 object-cover rounded border" />
+                  <img src={photoPreviews[r._id]} className="w-20 h-14 object-cover rounded border border-[#e9e9e7]" />
                 )}
                 <button onClick={() => confirmReturn(r._id)} disabled={submitting[r._id]}
-                  className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50">
+                  className="btn-primary">
+                  <CheckCircle2 size={14} />
                   {submitting[r._id] ? 'กำลังบันทึก...' : 'ยืนยันรับคืน'}
                 </button>
               </div>
             </div>
           </div>
         ))}
-        {borrows.length === 0 && <div className="text-gray-400 text-center py-8">ไม่มีอุปกรณ์ที่ถูกยืมอยู่</div>}
+        {borrows.length === 0 && (
+          <div className="text-center py-12 text-[#787774]">
+            <Inbox size={32} className="mx-auto mb-2 opacity-40" />
+            <div className="text-sm">ไม่มีอุปกรณ์ที่ถูกยืมอยู่</div>
+          </div>
+        )}
       </div>
     </div>
   );

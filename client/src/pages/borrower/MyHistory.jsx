@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import { Clock, Calendar } from 'lucide-react';
 
 export default function MyHistory() {
   const [records, setRecords] = useState([]);
@@ -11,41 +12,59 @@ export default function MyHistory() {
     setRecords(res.data);
   }
 
-  const statusLabel = { pending: 'รออนุมัติ', approved: 'ยืมอยู่', rejected: 'ปฏิเสธ', returned: 'คืนแล้ว' };
-  const statusColor = { pending: 'text-orange-600', approved: 'text-yellow-600', rejected: 'text-red-600', returned: 'text-green-600' };
+  const statusStyle = {
+    pending: { th: 'รออนุมัติ', cls: 'bg-yellow-50 text-[#cb6a00]' },
+    approved: { th: 'ยืมอยู่', cls: 'bg-orange-50 text-[#d9730d]' },
+    rejected: { th: 'ปฏิเสธ', cls: 'bg-red-50 text-[#e03e3e]' },
+    returned: { th: 'คืนแล้ว', cls: 'bg-green-50 text-[#0f7b6c]' },
+  };
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">ประวัติของฉัน</h2>
-      <div className="space-y-3">
-        {records.map((r) => (
-          <div key={r._id} className="bg-white rounded shadow p-4">
-            <div className="flex justify-between">
-              <div className="font-medium">{r.item?.name || '-'}</div>
-              <span className={`text-sm font-medium ${statusColor[r.status]}`}>{statusLabel[r.status]}</span>
-            </div>
-            <div className="text-sm text-gray-500 mt-1">
-              ขอเมื่อ: {new Date(r.createdAt).toLocaleDateString('th-TH')}
-            </div>
-            {(r.borrowImage || r.returnImage) && (
-              <div className="flex gap-3 mt-2">
-                {r.borrowImage && (
-                  <div>
-                    <span className="text-xs text-gray-400">รูปตอนยืม</span>
-                    <img src={r.borrowImage} className="w-20 h-14 object-cover rounded border mt-1" />
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[#37352f] mb-1">ประวัติของฉัน</h1>
+        <p className="text-sm text-[#787774]">รายการยืม-คืนทั้งหมดของคุณ</p>
+      </div>
+
+      <div className="space-y-2">
+        {records.map((r) => {
+          const s = statusStyle[r.status];
+          return (
+            <div key={r._id} className="notion-card">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-semibold text-[#37352f]">{r.item?.name || '-'}</div>
+                  <div className="flex items-center gap-1 text-sm text-[#787774] mt-1">
+                    <Calendar size={13} /> ขอเมื่อ: {new Date(r.createdAt).toLocaleDateString('th-TH')}
                   </div>
-                )}
-                {r.returnImage && (
-                  <div>
-                    <span className="text-xs text-gray-400">รูปตอนคืน</span>
-                    <img src={r.returnImage} className="w-20 h-14 object-cover rounded border mt-1" />
-                  </div>
-                )}
+                </div>
+                <span className={`badge ${s.cls}`}>{s.th}</span>
               </div>
-            )}
+              {(r.borrowImage || r.returnImage) && (
+                <div className="flex gap-3 mt-3">
+                  {r.borrowImage && (
+                    <div>
+                      <span className="text-xs text-[#aeacaa]">รูปตอนยืม</span>
+                      <img src={r.borrowImage} className="w-20 h-14 object-cover rounded border border-[#e9e9e7] mt-1" />
+                    </div>
+                  )}
+                  {r.returnImage && (
+                    <div>
+                      <span className="text-xs text-[#aeacaa]">รูปตอนคืน</span>
+                      <img src={r.returnImage} className="w-20 h-14 object-cover rounded border border-[#e9e9e7] mt-1" />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {records.length === 0 && (
+          <div className="text-center py-12 text-[#787774]">
+            <Clock size={32} className="mx-auto mb-2 opacity-40" />
+            <div className="text-sm">ยังไม่มีประวัติ</div>
           </div>
-        ))}
-        {records.length === 0 && <div className="text-gray-400 text-center py-8">ยังไม่มีประวัติ</div>}
+        )}
       </div>
     </div>
   );

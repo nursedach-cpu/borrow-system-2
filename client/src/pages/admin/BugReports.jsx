@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import { Bug, Save, Trash2, Settings2, Inbox } from 'lucide-react';
 
 const STATUS_OPTIONS = [
-  { value: 'open', label: 'ใหม่', color: 'bg-blue-100 text-blue-700' },
-  { value: 'in_progress', label: 'กำลังตรวจสอบ', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'resolved', label: 'แก้ไขแล้ว', color: 'bg-green-100 text-green-800' },
-  { value: 'closed', label: 'ปิด', color: 'bg-gray-100 text-gray-600' },
-  { value: 'wont_fix', label: 'ไม่แก้ไข', color: 'bg-gray-100 text-gray-600' },
+  { value: 'open', label: 'ใหม่', cls: 'bg-blue-50 text-[#2383e2]' },
+  { value: 'in_progress', label: 'กำลังตรวจสอบ', cls: 'bg-yellow-50 text-[#cb6a00]' },
+  { value: 'resolved', label: 'แก้ไขแล้ว', cls: 'bg-green-50 text-[#0f7b6c]' },
+  { value: 'closed', label: 'ปิด', cls: 'bg-[#f7f6f3] text-[#787774]' },
+  { value: 'wont_fix', label: 'ไม่แก้ไข', cls: 'bg-[#f7f6f3] text-[#787774]' },
 ];
 
 const SEVERITY_LABEL = {
-  low: { th: 'น้อย', color: 'bg-gray-100 text-gray-700' },
-  medium: { th: 'ปานกลาง', color: 'bg-yellow-100 text-yellow-800' },
-  high: { th: 'มาก', color: 'bg-orange-100 text-orange-800' },
-  critical: { th: 'วิกฤติ', color: 'bg-red-100 text-red-700' },
+  low: { th: 'น้อย', cls: 'bg-[#f7f6f3] text-[#787774]' },
+  medium: { th: 'ปานกลาง', cls: 'bg-yellow-50 text-[#cb6a00]' },
+  high: { th: 'มาก', cls: 'bg-orange-50 text-[#d9730d]' },
+  critical: { th: 'วิกฤติ', cls: 'bg-red-50 text-[#e03e3e]' },
 };
 
 const CATEGORY_LABEL = {
@@ -66,10 +67,7 @@ export default function AdminBugReports() {
 
   async function saveEdit() {
     try {
-      await api.put(`/bug-reports/${editingId}/status`, {
-        status: editStatus,
-        adminNote: editNote,
-      });
+      await api.put(`/bug-reports/${editingId}/status`, { status: editStatus, adminNote: editNote });
       setEditingId('');
       await load();
       await loadStats();
@@ -91,45 +89,37 @@ export default function AdminBugReports() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">จัดการรายงานบั๊ก</h2>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[#37352f] mb-1">จัดการรายงานบั๊ก</h1>
+        <p className="text-sm text-[#787774]">รายงานบั๊กและข้อเสนอแนะจากผู้ใช้</p>
+      </div>
 
-      {/* Stats */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-          <div className="bg-blue-50 rounded p-3 text-center">
-            <div className="text-2xl font-bold text-blue-700">{stats.open}</div>
-            <div className="text-xs text-gray-600">ใหม่</div>
-          </div>
-          <div className="bg-yellow-50 rounded p-3 text-center">
-            <div className="text-2xl font-bold text-yellow-700">{stats.inProgress}</div>
-            <div className="text-xs text-gray-600">กำลังตรวจ</div>
-          </div>
-          <div className="bg-green-50 rounded p-3 text-center">
-            <div className="text-2xl font-bold text-green-700">{stats.resolved}</div>
-            <div className="text-xs text-gray-600">แก้แล้ว</div>
-          </div>
-          <div className="bg-gray-50 rounded p-3 text-center">
-            <div className="text-2xl font-bold text-gray-700">{stats.closed}</div>
-            <div className="text-xs text-gray-600">ปิด</div>
-          </div>
-          <div className="bg-red-50 rounded p-3 text-center">
-            <div className="text-2xl font-bold text-red-700">{stats.criticalUnresolved}</div>
-            <div className="text-xs text-gray-600">วิกฤติค้าง</div>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+          {[
+            { label: 'ใหม่', value: stats.open, cls: 'text-[#2383e2]', bg: 'bg-blue-50' },
+            { label: 'กำลังตรวจ', value: stats.inProgress, cls: 'text-[#cb6a00]', bg: 'bg-yellow-50' },
+            { label: 'แก้แล้ว', value: stats.resolved, cls: 'text-[#0f7b6c]', bg: 'bg-green-50' },
+            { label: 'ปิด', value: stats.closed, cls: 'text-[#787774]', bg: 'bg-[#f7f6f3]' },
+            { label: 'วิกฤติค้าง', value: stats.criticalUnresolved, cls: 'text-[#e03e3e]', bg: 'bg-red-50' },
+          ].map((s) => (
+            <div key={s.label} className="notion-card">
+              <div className={`w-8 h-8 rounded-md ${s.bg} flex items-center justify-center mb-2`}>
+                <Bug size={14} className={s.cls} />
+              </div>
+              <div className={`text-2xl font-bold ${s.cls} tabular-nums`}>{s.value}</div>
+              <div className="text-xs text-[#787774]">{s.label}</div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Filters */}
       <div className="flex gap-2 mb-4">
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-          className="border rounded px-3 py-2 text-sm">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="notion-input max-w-[180px]">
           <option value="">ทุกสถานะ</option>
-          {STATUS_OPTIONS.map((s) => (
-            <option key={s.value} value={s.value}>{s.label}</option>
-          ))}
+          {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
-        <select value={severityFilter} onChange={(e) => setSeverityFilter(e.target.value)}
-          className="border rounded px-3 py-2 text-sm">
+        <select value={severityFilter} onChange={(e) => setSeverityFilter(e.target.value)} className="notion-input max-w-[180px]">
           <option value="">ทุกความรุนแรง</option>
           <option value="critical">วิกฤติ</option>
           <option value="high">มาก</option>
@@ -138,65 +128,62 @@ export default function AdminBugReports() {
         </select>
       </div>
 
-      {loading && <div className="text-gray-400">กำลังโหลด...</div>}
+      {loading && <div className="text-[#787774] text-sm">กำลังโหลด...</div>}
       {!loading && list.length === 0 && (
-        <div className="text-gray-400 text-center py-8 bg-white rounded shadow">ไม่มีรายงาน</div>
+        <div className="text-center py-12 text-[#787774] notion-card">
+          <Inbox size={32} className="mx-auto mb-2 opacity-40" />
+          <div className="text-sm">ไม่มีรายงาน</div>
+        </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {list.map((r) => {
           const status = statusInfo(r.status);
           const sev = SEVERITY_LABEL[r.severity];
           const isEditing = editingId === r._id;
           return (
-            <div key={r._id} className="bg-white rounded shadow p-4">
+            <div key={r._id} className="notion-card">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className={`text-xs px-2 py-0.5 rounded ${status.color}`}>{status.label}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded ${sev.color}`}>{sev.th}</span>
-                    <span className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-600">
-                      {CATEGORY_LABEL[r.category]}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className={`badge ${status.cls}`}>{status.label}</span>
+                    <span className={`badge ${sev.cls}`}>{sev.th}</span>
+                    <span className="badge bg-[#f7f6f3] text-[#787774]">{CATEGORY_LABEL[r.category]}</span>
                   </div>
-                  <div className="font-medium">{r.title}</div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    โดย: <span className="font-medium">{r.reporter?.name || '-'}</span>
-                    {r.reporter?.department && <span className="text-gray-400"> · {r.reporter.department}</span>}
+                  <div className="font-semibold text-[#37352f]">{r.title}</div>
+                  <div className="text-sm text-[#787774] mt-1">
+                    โดย: <span className="font-medium text-[#37352f]">{r.reporter?.name || '-'}</span>
+                    {r.reporter?.department && <span className="text-[#aeacaa]"> · {r.reporter.department}</span>}
                   </div>
-                  <div className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">{r.description}</div>
+                  <div className="text-sm text-[#37352f] mt-2 whitespace-pre-wrap">{r.description}</div>
 
                   {r.screenshotUrl && (
                     <a href={r.screenshotUrl} target="_blank" rel="noreferrer">
-                      <img src={r.screenshotUrl} className="mt-2 max-h-40 rounded border" alt="" />
+                      <img src={r.screenshotUrl} className="mt-2 max-h-40 rounded border border-[#e9e9e7]" alt="" />
                     </a>
                   )}
 
                   {r.adminNote && !isEditing && (
-                    <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-900">
+                    <div className="mt-2 p-2 bg-blue-50 border border-blue-100 rounded text-sm text-[#2383e2]">
                       💬 <span className="font-medium">Note:</span> {r.adminNote}
                     </div>
                   )}
 
-                  <div className="text-xs text-gray-400 mt-2">
+                  <div className="text-xs text-[#aeacaa] mt-2">
                     {new Date(r.createdAt).toLocaleString('th-TH')}
-                    {r.pageUrl && <span> · <code>{r.pageUrl}</code></span>}
+                    {r.pageUrl && <span> · <code className="bg-[#f7f6f3] px-1 rounded">{r.pageUrl}</code></span>}
                   </div>
-                  {r.userAgent && (
-                    <div className="text-xs text-gray-400 truncate">UA: {r.userAgent}</div>
-                  )}
+                  {r.userAgent && <div className="text-xs text-[#aeacaa] truncate">UA: {r.userAgent}</div>}
                 </div>
 
                 <div className="flex flex-col gap-1 min-w-[100px]">
                   {!isEditing && (
                     <>
-                      <button onClick={() => openEdit(r)}
-                        className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                        จัดการ
+                      <button onClick={() => openEdit(r)} className="btn-primary">
+                        <Settings2 size={14} /> จัดการ
                       </button>
-                      <button onClick={() => del(r._id)}
-                        className="text-sm text-red-600 hover:text-red-800 px-3 py-1">
-                        ลบ
+                      <button onClick={() => del(r._id)} className="btn-danger">
+                        <Trash2 size={14} /> ลบ
                       </button>
                     </>
                   )}
@@ -204,30 +191,22 @@ export default function AdminBugReports() {
               </div>
 
               {isEditing && (
-                <div className="mt-3 p-3 bg-gray-50 rounded space-y-2">
+                <div className="mt-3 p-3 bg-[#f7f6f3] rounded space-y-2">
                   <div>
-                    <label className="block text-sm text-gray-700 mb-1">เปลี่ยนสถานะ</label>
-                    <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)}
-                      className="border rounded px-3 py-2 w-full">
-                      {STATUS_OPTIONS.map((s) => (
-                        <option key={s.value} value={s.value}>{s.label}</option>
-                      ))}
+                    <label className="block text-xs font-medium text-[#787774] uppercase tracking-wider mb-1">เปลี่ยนสถานะ</label>
+                    <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="notion-input">
+                      {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-700 mb-1">โน้ตถึงผู้แจ้ง (ไม่บังคับ)</label>
-                    <textarea value={editNote} onChange={(e) => setEditNote(e.target.value)}
-                      rows={2}
+                    <label className="block text-xs font-medium text-[#787774] uppercase tracking-wider mb-1">โน้ตถึงผู้แจ้ง (ไม่บังคับ)</label>
+                    <textarea value={editNote} onChange={(e) => setEditNote(e.target.value)} rows={2}
                       placeholder="เช่น แก้ไขใน v1.2 แล้ว / ขอบคุณสำหรับข้อเสนอ"
-                      className="border rounded px-3 py-2 w-full" />
+                      className="notion-input" />
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <button onClick={() => setEditingId('')}
-                      className="text-sm text-gray-600 px-3 py-1">ยกเลิก</button>
-                    <button onClick={saveEdit}
-                      className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                      บันทึก
-                    </button>
+                    <button onClick={() => setEditingId('')} className="btn-secondary">ยกเลิก</button>
+                    <button onClick={saveEdit} className="btn-primary"><Save size={14} /> บันทึก</button>
                   </div>
                 </div>
               )}

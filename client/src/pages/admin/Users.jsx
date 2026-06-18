@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import { Search, ShieldCheck, User, UserPlus, UserMinus } from 'lucide-react';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -41,62 +42,64 @@ export default function Users() {
     );
   });
 
-  const roleLabel = { admin: 'ผู้ดูแล', borrower: 'ผู้ยืม' };
-  const roleBadge = {
-    admin: 'bg-blue-100 text-blue-700',
-    borrower: 'bg-gray-100 text-gray-700',
-  };
-
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">จัดการผู้ใช้</h2>
-      <input
-        placeholder="ค้นหา (ชื่อ, อีเมล, แผนก)..."
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        className="border rounded px-3 py-2 mb-4 w-full max-w-md"
-      />
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[#37352f] mb-1">จัดการผู้ใช้</h1>
+        <p className="text-sm text-[#787774]">ดูและจัดการสิทธิ์ของผู้ใช้ทั้งหมด</p>
+      </div>
+
+      <div className="relative mb-4 max-w-md">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#787774]" />
+        <input
+          placeholder="ค้นหา (ชื่อ, อีเมล, แผนก)..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="notion-input pl-9"
+        />
+      </div>
+
+      <div className="bg-white border border-[#e9e9e7] rounded-lg overflow-hidden">
+        <table className="notion-table">
+          <thead>
             <tr>
-              <th className="text-left px-4 py-3">ชื่อ</th>
-              <th className="text-left px-4 py-3">อีเมล</th>
-              <th className="text-left px-4 py-3">แผนก</th>
-              <th className="text-left px-4 py-3">สิทธิ์</th>
-              <th className="text-left px-4 py-3">สมัครเมื่อ</th>
-              <th className="text-left px-4 py-3">จัดการ</th>
+              <th>ชื่อ</th>
+              <th>อีเมล</th>
+              <th>แผนก</th>
+              <th>สิทธิ์</th>
+              <th>สมัครเมื่อ</th>
+              <th>จัดการ</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((u) => (
-              <tr key={u._id} className="border-t">
-                <td className="px-4 py-3 font-medium">{u.name}</td>
-                <td className="px-4 py-3">{u.email}</td>
-                <td className="px-4 py-3">{u.department || '-'}</td>
-                <td className="px-4 py-3">
-                  <span className={`text-xs px-2 py-1 rounded ${roleBadge[u.role]}`}>
-                    {roleLabel[u.role]}
+              <tr key={u._id}>
+                <td>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-7 h-7 rounded flex items-center justify-center text-white text-xs font-semibold ${u.role === 'admin' ? 'bg-[#2383e2]' : 'bg-[#0f7b6c]'}`}>
+                      {u.name?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                    <span className="font-medium text-[#37352f]">{u.name}</span>
+                  </div>
+                </td>
+                <td className="text-[#787774]">{u.email}</td>
+                <td className="text-[#787774]">{u.department || '-'}</td>
+                <td>
+                  <span className={`badge ${u.role === 'admin' ? 'bg-blue-50 text-[#2383e2]' : 'bg-[#f7f6f3] text-[#787774]'}`}>
+                    {u.role === 'admin' ? <><ShieldCheck size={11} /> ผู้ดูแล</> : <><User size={11} /> ผู้ยืม</>}
                   </span>
                 </td>
-                <td className="px-4 py-3">
-                  {new Date(u.createdAt).toLocaleDateString('th-TH')}
-                </td>
-                <td className="px-4 py-3">
+                <td className="text-[#787774]">{new Date(u.createdAt).toLocaleDateString('th-TH')}</td>
+                <td>
                   <button
                     onClick={() => toggleRole(u)}
                     disabled={updating[u._id]}
-                    className={`text-xs px-3 py-1 rounded ${
-                      u.role === 'admin'
-                        ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
-                        : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs ${
+                      u.role === 'admin' ? 'text-[#d9730d] hover:bg-orange-50' : 'text-[#2383e2] hover:bg-blue-50'
                     } disabled:opacity-50`}
                   >
-                    {updating[u._id]
-                      ? 'กำลังเปลี่ยน...'
-                      : u.role === 'admin'
-                        ? 'ลดเป็นผู้ยืม'
-                        : 'เลื่อนเป็นผู้ดูแล'}
+                    {u.role === 'admin' ? <UserMinus size={13} /> : <UserPlus size={13} />}
+                    {updating[u._id] ? 'กำลังเปลี่ยน...' : u.role === 'admin' ? 'ลดเป็นผู้ยืม' : 'เลื่อนเป็นผู้ดูแล'}
                   </button>
                 </td>
               </tr>
@@ -104,7 +107,10 @@ export default function Users() {
           </tbody>
         </table>
         {filtered.length === 0 && (
-          <div className="text-center py-8 text-gray-400">ไม่พบผู้ใช้</div>
+          <div className="text-center py-12 text-[#787774]">
+            <User size={32} className="mx-auto mb-2 opacity-40" />
+            <div className="text-sm">ไม่พบผู้ใช้</div>
+          </div>
         )}
       </div>
     </div>

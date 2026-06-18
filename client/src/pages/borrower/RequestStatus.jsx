@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import { ClipboardList, Calendar } from 'lucide-react';
 
 export default function RequestStatus() {
   const [requests, setRequests] = useState([]);
@@ -15,29 +16,41 @@ export default function RequestStatus() {
     setRequests(res.data.filter((r) => r.status === 'pending' || r.status === 'rejected'));
   }
 
-  const statusLabel = { pending: 'รออนุมัติ', rejected: 'ปฏิเสธ' };
-  const statusColor = { pending: 'bg-orange-100 text-orange-700', rejected: 'bg-red-100 text-red-700' };
+  const statusStyle = {
+    pending: { th: 'รออนุมัติ', cls: 'bg-yellow-50 text-[#cb6a00]' },
+    rejected: { th: 'ปฏิเสธ', cls: 'bg-red-50 text-[#e03e3e]' },
+  };
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">สถานะคำขอ</h2>
-      <div className="space-y-3">
-        {requests.map((r) => (
-          <div key={r._id} className="bg-white rounded shadow p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="font-medium">{r.item?.name || '-'}</div>
-                <div className="text-sm text-gray-500">
-                  ขอเมื่อ: {new Date(r.createdAt).toLocaleDateString('th-TH')}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[#37352f] mb-1">สถานะคำขอ</h1>
+        <p className="text-sm text-[#787774]">คำขอยืมที่รอดำเนินการ</p>
+      </div>
+
+      <div className="space-y-2">
+        {requests.map((r) => {
+          const s = statusStyle[r.status];
+          return (
+            <div key={r._id} className="notion-card">
+              <div className="flex justify-between items-center gap-4">
+                <div>
+                  <div className="font-semibold text-[#37352f]">{r.item?.name || '-'}</div>
+                  <div className="flex items-center gap-1 text-sm text-[#787774] mt-1">
+                    <Calendar size={13} /> ขอเมื่อ: {new Date(r.createdAt).toLocaleDateString('th-TH')}
+                  </div>
                 </div>
+                <span className={`badge ${s.cls}`}>{s.th}</span>
               </div>
-              <span className={`text-sm px-2 py-1 rounded ${statusColor[r.status]}`}>
-                {statusLabel[r.status]}
-              </span>
             </div>
+          );
+        })}
+        {requests.length === 0 && (
+          <div className="text-center py-12 text-[#787774]">
+            <ClipboardList size={32} className="mx-auto mb-2 opacity-40" />
+            <div className="text-sm">ไม่มีคำขอที่รอดำเนินการ</div>
           </div>
-        ))}
-        {requests.length === 0 && <div className="text-gray-400 text-center py-8">ไม่มีคำขอที่รอดำเนินการ</div>}
+        )}
       </div>
     </div>
   );
