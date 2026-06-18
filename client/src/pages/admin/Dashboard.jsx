@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
 import ItemBorrowStats from '../../components/ItemBorrowStats';
+import { Package, CheckCircle, Clock, Wrench, AlertCircle, AlarmClock } from 'lucide-react';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -21,30 +22,40 @@ export default function Dashboard() {
     }
   }
 
-  if (error) return <div className="text-red-600">{error}</div>;
-  if (!stats) return <div>กำลังโหลด...</div>;
+  if (error) return <div className="text-[#e03e3e] text-sm">{error}</div>;
+  if (!stats) return <div className="text-[#787774] text-sm">กำลังโหลด...</div>;
 
   const cards = [
-    { label: 'อุปกรณ์ทั้งหมด', value: stats.totalItems, color: 'bg-blue-500' },
-    { label: 'ว่าง', value: stats.available, color: 'bg-green-500' },
-    { label: 'ถูกยืม', value: stats.borrowed, color: 'bg-yellow-500' },
-    { label: 'ซ่อมบำรุง', value: stats.maintenance, color: 'bg-gray-500' },
-    { label: 'คำขอรออนุมัติ', value: stats.pendingRequests, color: 'bg-orange-500' },
-    { label: 'เกินกำหนดคืน', value: stats.overdueItems, color: 'bg-red-500' },
+    { label: 'อุปกรณ์ทั้งหมด', value: stats.totalItems, icon: Package, color: 'text-[#2383e2]', bg: 'bg-blue-50' },
+    { label: 'ว่าง', value: stats.available, icon: CheckCircle, color: 'text-[#0f7b6c]', bg: 'bg-green-50' },
+    { label: 'ถูกยืม', value: stats.borrowed, icon: Clock, color: 'text-[#d9730d]', bg: 'bg-orange-50' },
+    { label: 'ซ่อมบำรุง', value: stats.maintenance, icon: Wrench, color: 'text-[#787774]', bg: 'bg-gray-100' },
+    { label: 'คำขอรออนุมัติ', value: stats.pendingRequests, icon: AlertCircle, color: 'text-[#cb6a00]', bg: 'bg-yellow-50' },
+    { label: 'เกินกำหนดคืน', value: stats.overdueItems, icon: AlarmClock, color: 'text-[#e03e3e]', bg: 'bg-red-50' },
   ];
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">แดชบอร์ด</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {cards.map((card) => (
-          <div key={card.label} className="bg-white rounded-lg shadow p-4">
-            <div className={`text-3xl font-bold ${card.color.replace('bg-', 'text-')}`}>
-              {card.value}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[#37352f] mb-1">แดชบอร์ด</h1>
+        <p className="text-sm text-[#787774]">ภาพรวมระบบยืม-คืนอุปกรณ์</p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+        {cards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <div key={card.label} className="notion-card hover:border-[#d3d3d0] transition-colors">
+              <div className="flex items-start justify-between mb-3">
+                <div className={`w-9 h-9 rounded-lg ${card.bg} flex items-center justify-center`}>
+                  <Icon size={18} className={card.color} />
+                </div>
+              </div>
+              <div className="text-3xl font-bold text-[#37352f] tabular-nums">{card.value}</div>
+              <div className="text-sm text-[#787774] mt-1">{card.label}</div>
             </div>
-            <div className="text-sm text-gray-600 mt-1">{card.label}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <ItemBorrowStats />

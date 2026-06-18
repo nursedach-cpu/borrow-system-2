@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
+import { Plus, Pencil, Trash2, QrCode, Upload, Package } from 'lucide-react';
 
 export default function Items() {
   const [items, setItems] = useState([]);
@@ -67,81 +68,109 @@ export default function Items() {
   }
 
   const statusLabel = { available: 'ว่าง', borrowed: 'ถูกยืม', maintenance: 'ซ่อมบำรุง' };
-  const statusColor = { available: 'text-green-600', borrowed: 'text-yellow-600', maintenance: 'text-gray-600' };
+  const statusStyle = {
+    available: 'bg-green-50 text-[#0f7b6c]',
+    borrowed: 'bg-orange-50 text-[#d9730d]',
+    maintenance: 'bg-gray-100 text-[#787774]',
+  };
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">จัดการอุปกรณ์</h2>
-        <button onClick={() => { setShowForm(true); setEditItem(null); setForm({ name: '', description: '', category: '' }); }}
-          className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
-          + เพิ่มอุปกรณ์
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-[#37352f] mb-1">จัดการอุปกรณ์</h1>
+          <p className="text-sm text-[#787774]">เพิ่ม แก้ไข ลบอุปกรณ์ และจัดการ QR Code</p>
+        </div>
+        <button
+          onClick={() => { setShowForm(true); setEditItem(null); setForm({ name: '', description: '', category: '' }); }}
+          className="btn-primary"
+        >
+          <Plus size={16} />
+          เพิ่มอุปกรณ์
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow mb-4">
-          <h3 className="font-medium mb-3">{editItem ? 'แก้ไข' : 'เพิ่ม'}อุปกรณ์</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+        <form onSubmit={handleSubmit} className="notion-card mb-5">
+          <h3 className="font-semibold text-[#37352f] mb-4">{editItem ? 'แก้ไข' : 'เพิ่ม'}อุปกรณ์</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
             <input name="name" placeholder="ชื่อ *" value={form.name} onChange={onChange}
-              className="border rounded px-3 py-2" required />
+              className="notion-input" required />
             <input name="category" placeholder="หมวดหมู่" value={form.category} onChange={onChange}
-              className="border rounded px-3 py-2" />
+              className="notion-input" />
             <input name="description" placeholder="รายละเอียด" value={form.description} onChange={onChange}
-              className="border rounded px-3 py-2" />
+              className="notion-input" />
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded text-sm">บันทึก</button>
-            <button type="button" onClick={() => setShowForm(false)}
-              className="bg-gray-200 px-4 py-2 rounded text-sm">ยกเลิก</button>
+            <button type="submit" className="btn-primary">บันทึก</button>
+            <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">ยกเลิก</button>
           </div>
         </form>
       )}
 
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+      <div className="bg-white border border-[#e9e9e7] rounded-lg overflow-hidden">
+        <table className="notion-table">
+          <thead>
             <tr>
-              <th className="text-left px-4 py-3">ชื่อ</th>
-              <th className="text-left px-4 py-3">หมวดหมู่</th>
-              <th className="text-left px-4 py-3">สถานะ</th>
-              <th className="text-left px-4 py-3">QR Code</th>
-              <th className="text-left px-4 py-3">จัดการ</th>
+              <th>ชื่อ</th>
+              <th>หมวดหมู่</th>
+              <th>สถานะ</th>
+              <th>QR Code</th>
+              <th>จัดการ</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item._id} className="border-t">
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    {item.imageUrl && <img src={item.imageUrl} className="w-8 h-8 rounded object-cover" />}
-                    {item.name}
+              <tr key={item._id}>
+                <td>
+                  <div className="flex items-center gap-3">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} className="w-9 h-9 rounded object-cover border border-[#e9e9e7]" />
+                    ) : (
+                      <div className="w-9 h-9 rounded bg-[#f7f6f3] border border-[#e9e9e7] flex items-center justify-center">
+                        <Package size={16} className="text-[#787774]" />
+                      </div>
+                    )}
+                    <span className="font-medium text-[#37352f]">{item.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3">{item.category || '-'}</td>
-                <td className={`px-4 py-3 font-medium ${statusColor[item.status]}`}>
-                  {statusLabel[item.status]}
+                <td className="text-[#787774]">{item.category || '-'}</td>
+                <td>
+                  <span className={`badge ${statusStyle[item.status]}`}>{statusLabel[item.status]}</span>
                 </td>
-                <td className="px-4 py-3">
+                <td>
                   <button onClick={() => downloadQr(item._id, item.name)}
-                    className="text-blue-600 hover:underline text-xs">ดาวน์โหลด QR</button>
+                    className="inline-flex items-center gap-1 text-[#2383e2] hover:bg-blue-50 px-2 py-1 rounded text-xs">
+                    <QrCode size={13} /> ดาวน์โหลด
+                  </button>
                 </td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-2">
-                    <button onClick={() => startEdit(item)} className="text-blue-600 hover:underline text-xs">แก้ไข</button>
-                    <button onClick={() => handleDelete(item._id)} className="text-red-600 hover:underline text-xs">ลบ</button>
-                    <label className="text-green-600 hover:underline text-xs cursor-pointer">
-                      อัปโหลดรูป
+                <td>
+                  <div className="flex gap-1">
+                    <button onClick={() => startEdit(item)}
+                      className="inline-flex items-center gap-1 text-[#37352f] hover:bg-[#f7f6f3] px-2 py-1 rounded text-xs">
+                      <Pencil size={13} /> แก้ไข
+                    </button>
+                    <label className="inline-flex items-center gap-1 text-[#0f7b6c] hover:bg-green-50 px-2 py-1 rounded text-xs cursor-pointer">
+                      <Upload size={13} /> อัปโหลดรูป
                       <input type="file" accept="image/*" className="hidden"
                         onChange={(e) => { if (e.target.files[0]) handleImageUpload(item._id, e.target.files[0]); }} />
                     </label>
+                    <button onClick={() => handleDelete(item._id)}
+                      className="inline-flex items-center gap-1 text-[#e03e3e] hover:bg-red-50 px-2 py-1 rounded text-xs">
+                      <Trash2 size={13} /> ลบ
+                    </button>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {items.length === 0 && <div className="text-center py-8 text-gray-400">ยังไม่มีอุปกรณ์</div>}
+        {items.length === 0 && (
+          <div className="text-center py-12 text-[#787774]">
+            <Package size={32} className="mx-auto mb-2 opacity-40" />
+            <div className="text-sm">ยังไม่มีอุปกรณ์</div>
+          </div>
+        )}
       </div>
     </div>
   );

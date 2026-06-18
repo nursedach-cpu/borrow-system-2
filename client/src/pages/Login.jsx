@@ -103,40 +103,63 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#fbfbfa] p-4">
       <div className="w-full max-w-md">
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-center mb-2">ระบบยืม-คืนอุปกรณ์</h2>
-          <p className="text-center text-sm text-gray-400 mb-6">Equipment Borrowing System</p>
-          {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-[#2383e2] rounded-xl text-white text-xl font-bold mb-3">
+            📦
+          </div>
+          <h2 className="text-2xl font-bold text-[#37352f]">ระบบยืม-คืนอุปกรณ์</h2>
+          <p className="text-sm text-[#787774] mt-1">Equipment Borrowing System</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="bg-white border border-[#e9e9e7] p-7 rounded-lg">
+          {error && (
+            <div className="bg-red-50 border border-red-100 text-[#e03e3e] p-3 rounded-md mb-4 text-sm">
+              {error}
+            </div>
+          )}
           <label className="block mb-4">
-            <span className="text-sm text-gray-700">อีเมล / Email</span>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full border rounded px-3 py-2" required />
+            <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">อีเมล / Email</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="notion-input mt-1.5"
+              required
+            />
           </label>
-          <label className="block mb-6">
-            <span className="text-sm text-gray-700">รหัสผ่าน / Password</span>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full border rounded px-3 py-2" required />
+          <label className="block mb-5">
+            <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">รหัสผ่าน / Password</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="notion-input mt-1.5"
+              required
+            />
           </label>
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          <button type="submit" className="w-full btn-primary justify-center py-2.5">
             เข้าสู่ระบบ / Login
           </button>
-          <p className="text-center text-sm mt-4 text-gray-500">
-            ยังไม่มีบัญชี? <Link to="/register" className="text-blue-600 hover:underline">สมัครสมาชิก / Register</Link>
+          <p className="text-center text-sm mt-4 text-[#787774]">
+            ยังไม่มีบัญชี?{' '}
+            <Link to="/register" className="text-[#2383e2] hover:underline font-medium">
+              สมัครสมาชิก / Register
+            </Link>
           </p>
         </form>
 
-        <div className="mt-4 bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="mt-4 bg-white border border-[#e9e9e7] rounded-lg overflow-hidden">
           <button
             onClick={() => setShowGuide(!showGuide)}
-            className="w-full px-6 py-3 text-sm font-medium text-blue-600 hover:bg-blue-50 flex items-center justify-between"
+            className="w-full px-5 py-3 text-sm font-medium text-[#37352f] hover:bg-[#f7f6f3] flex items-center justify-between transition-colors"
           >
-            <span>คู่มือการใช้งาน / User Guide</span>
-            <span className="text-lg">{showGuide ? '▲' : '▼'}</span>
+            <span>📖 คู่มือการใช้งาน / User Guide</span>
+            <span className="text-xs text-[#787774]">{showGuide ? '▲' : '▼'}</span>
           </button>
           {showGuide && (
-            <div className="px-6 pb-5 border-t">
+            <div className="px-5 pb-5 border-t border-[#e9e9e7]">
               <div className="mt-4">
                 <UserGuide lang={guideLang} onToggleLang={() => setGuideLang(guideLang === 'th' ? 'en' : 'th')} />
               </div>
