@@ -44,8 +44,8 @@ export default function MyBorrows() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[#37352f] mb-1">ของที่ยืมอยู่</h1>
-        <p className="text-sm text-[#787774]">รายการอุปกรณ์ที่คุณกำลังยืม</p>
+        <h1 className="text-3xl font-bold text-[#221f26] mb-1">ของที่ยืมอยู่</h1>
+        <p className="text-sm text-[#6c6770]">รายการอุปกรณ์ที่คุณกำลังยืม</p>
       </div>
 
       <div className="space-y-2">
@@ -53,13 +53,13 @@ export default function MyBorrows() {
           const overdue = r.dueDate && new Date(r.dueDate) < new Date();
           const isExtending = extendingId === r._id;
           return (
-            <div key={r._id} className={`notion-card ${overdue ? 'border-l-4 border-l-[#e03e3e]' : ''}`}>
-              <div className="font-semibold text-[#37352f]">{r.item?.name || '-'}</div>
-              <div className="flex items-center gap-1 text-sm text-[#787774] mt-1">
+            <div key={r._id} className={`notion-card ${overdue ? 'border-l-4 border-l-[#c33b32]' : ''}`}>
+              <div className="font-semibold text-[#221f26]">{r.item?.name || '-'}</div>
+              <div className="flex items-center gap-1 text-sm text-[#6c6770] mt-1">
                 <Calendar size={13} /> ยืม: {new Date(r.borrowDate).toLocaleDateString('th-TH')}
               </div>
               {r.dueDate && (
-                <div className={`flex items-center gap-1 text-sm mt-1 ${overdue ? 'text-[#e03e3e] font-medium' : 'text-[#787774]'}`}>
+                <div className={`flex items-center gap-1 text-sm mt-1 ${overdue ? 'text-[#c33b32] font-medium' : 'text-[#6c6770]'}`}>
                   {overdue ? <AlertTriangle size={13} /> : <Clock size={13} />}
                   กำหนดคืน: {new Date(r.dueDate).toLocaleDateString('th-TH')}
                   {overdue && ' (เกินกำหนด!)'}
@@ -72,15 +72,15 @@ export default function MyBorrows() {
                   <Clock size={13} /> ขอขยายเวลา
                 </button>
               ) : (
-                <div className="mt-3 pt-3 border-t border-[#e9e9e7] space-y-3">
+                <div className="mt-3 pt-3 border-t border-[#e6e1da] space-y-3">
                   <label className="block">
-                    <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">วันคืนใหม่</span>
+                    <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">วันคืนใหม่</span>
                     <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
                       min={r.dueDate ? new Date(r.dueDate).toISOString().slice(0, 10) : ''}
                       className="notion-input mt-1" />
                   </label>
                   <label className="block">
-                    <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">เหตุผล (ไม่บังคับ)</span>
+                    <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">เหตุผล (ไม่บังคับ)</span>
                     <input value={extendNote} onChange={(e) => setExtendNote(e.target.value)}
                       placeholder="เช่น ต้องใช้งานต่ออีกสัปดาห์" className="notion-input mt-1" />
                   </label>
@@ -97,7 +97,7 @@ export default function MyBorrows() {
           );
         })}
         {borrows.length === 0 && (
-          <div className="text-center py-12 text-[#787774]">
+          <div className="text-center py-12 text-[#6c6770]">
             <Boxes size={32} className="mx-auto mb-2 opacity-40" />
             <div className="text-sm">ไม่มีของที่ยืมอยู่</div>
           </div>

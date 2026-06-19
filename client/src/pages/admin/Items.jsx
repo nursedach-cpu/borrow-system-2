@@ -87,15 +87,15 @@ export default function Items() {
   const statusStyle = {
     available: 'bg-green-50 text-[#0f7b6c]',
     borrowed: 'bg-orange-50 text-[#d9730d]',
-    maintenance: 'bg-gray-100 text-[#787774]',
+    maintenance: 'bg-gray-100 text-[#6c6770]',
   };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#37352f] mb-1">จัดการอุปกรณ์</h1>
-          <p className="text-sm text-[#787774]">เพิ่ม แก้ไข ลบอุปกรณ์ และจัดการ QR Code</p>
+          <h1 className="text-3xl font-bold text-[#221f26] mb-1">จัดการอุปกรณ์</h1>
+          <p className="text-sm text-[#6c6770]">เพิ่ม แก้ไข ลบอุปกรณ์ และจัดการ QR Code</p>
         </div>
         <button
           onClick={() => { setShowForm(true); setEditItem(null); setForm(EMPTY_FORM); }}
@@ -106,7 +106,7 @@ export default function Items() {
       </div>
 
       <div className="flex gap-2 mb-4 items-center">
-        <Building2 size={14} className="text-[#787774]" />
+        <Building2 size={14} className="text-[#6c6770]" />
         <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="notion-input max-w-[240px]">
           <option value="">ทุกแผนก</option>
           <option value="general">ของส่วนกลาง</option>
@@ -118,14 +118,14 @@ export default function Items() {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="notion-card mb-5">
-          <h3 className="font-semibold text-[#37352f] mb-4">{editItem ? 'แก้ไข' : 'เพิ่ม'}อุปกรณ์</h3>
+          <h3 className="font-semibold text-[#221f26] mb-4">{editItem ? 'แก้ไข' : 'เพิ่ม'}อุปกรณ์</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
             <input name="name" placeholder="ชื่อ *" value={form.name} onChange={onChange} className="notion-input" required />
             <input name="category" placeholder="หมวดหมู่" value={form.category} onChange={onChange} className="notion-input" />
           </div>
           <input name="description" placeholder="รายละเอียด" value={form.description} onChange={onChange} className="notion-input mb-3" />
           <label className="block mb-4">
-            <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">เจ้าของแผนก</span>
+            <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">เจ้าของแผนก</span>
             <select name="ownerDepartment" value={form.ownerDepartment} onChange={onChange} className="notion-input mt-1.5">
               <option value="">ของส่วนกลาง (ใครยืมก็ได้)</option>
               {DEPARTMENTS.map((d) => (
@@ -140,7 +140,7 @@ export default function Items() {
         </form>
       )}
 
-      <div className="bg-white border border-[#e9e9e7] rounded-lg overflow-hidden">
+      <div className="bg-white border border-[#e6e1da] rounded-lg overflow-hidden">
         <table className="notion-table">
           <thead>
             <tr>
@@ -158,21 +158,21 @@ export default function Items() {
                 <td>
                   <div className="flex items-center gap-3">
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} className="w-9 h-9 rounded object-cover border border-[#e9e9e7]" />
+                      <img src={item.imageUrl} className="w-9 h-9 rounded object-cover border border-[#e6e1da]" />
                     ) : (
-                      <div className="w-9 h-9 rounded bg-[#f7f6f3] border border-[#e9e9e7] flex items-center justify-center">
-                        <Package size={16} className="text-[#787774]" />
+                      <div className="w-9 h-9 rounded bg-[#f3f0ea] border border-[#e6e1da] flex items-center justify-center">
+                        <Package size={16} className="text-[#6c6770]" />
                       </div>
                     )}
-                    <span className="font-medium text-[#37352f]">{item.name}</span>
+                    <span className="font-medium text-[#221f26]">{item.name}</span>
                   </div>
                 </td>
-                <td className="text-[#787774]">{item.category || '-'}</td>
+                <td className="text-[#6c6770]">{item.category || '-'}</td>
                 <td>
                   {item.ownerDepartment ? (
-                    <span className="badge bg-blue-50 text-[#2383e2]">{item.ownerDepartment}</span>
+                    <span className="badge bg-violet-50 text-[#6a2c8f]">{item.ownerDepartment}</span>
                   ) : (
-                    <span className="badge bg-[#f7f6f3] text-[#787774]">ส่วนกลาง</span>
+                    <span className="badge bg-[#f3f0ea] text-[#6c6770]">ส่วนกลาง</span>
                   )}
                 </td>
                 <td>
@@ -180,14 +180,14 @@ export default function Items() {
                 </td>
                 <td>
                   <button onClick={() => downloadQr(item._id, item.name)}
-                    className="inline-flex items-center gap-1 text-[#2383e2] hover:bg-blue-50 px-2 py-1 rounded text-xs">
+                    className="inline-flex items-center gap-1 text-[#6a2c8f] hover:bg-violet-50 px-2 py-1 rounded text-xs">
                     <QrCode size={13} /> ดาวน์โหลด
                   </button>
                 </td>
                 <td>
                   <div className="flex gap-1">
                     <button onClick={() => startEdit(item)}
-                      className="inline-flex items-center gap-1 text-[#37352f] hover:bg-[#f7f6f3] px-2 py-1 rounded text-xs">
+                      className="inline-flex items-center gap-1 text-[#221f26] hover:bg-[#f3f0ea] px-2 py-1 rounded text-xs">
                       <Pencil size={13} /> แก้ไข
                     </button>
                     <label className="inline-flex items-center gap-1 text-[#0f7b6c] hover:bg-green-50 px-2 py-1 rounded text-xs cursor-pointer">
@@ -196,7 +196,7 @@ export default function Items() {
                         onChange={(e) => { if (e.target.files[0]) handleImageUpload(item._id, e.target.files[0]); }} />
                     </label>
                     <button onClick={() => handleDelete(item._id)}
-                      className="inline-flex items-center gap-1 text-[#e03e3e] hover:bg-red-50 px-2 py-1 rounded text-xs">
+                      className="inline-flex items-center gap-1 text-[#c33b32] hover:bg-red-50 px-2 py-1 rounded text-xs">
                       <Trash2 size={13} /> ลบ
                     </button>
                   </div>
@@ -206,7 +206,7 @@ export default function Items() {
           </tbody>
         </table>
         {items.length === 0 && (
-          <div className="text-center py-12 text-[#787774]">
+          <div className="text-center py-12 text-[#6c6770]">
             <Package size={32} className="mx-auto mb-2 opacity-40" />
             <div className="text-sm">ยังไม่มีอุปกรณ์</div>
           </div>

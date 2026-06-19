@@ -3,18 +3,18 @@ import api from '../../api/client';
 import { Bug, Trash2 } from 'lucide-react';
 
 const STATUS_LABEL = {
-  open: { th: 'ใหม่', cls: 'bg-blue-50 text-[#2383e2]' },
+  open: { th: 'ใหม่', cls: 'bg-violet-50 text-[#6a2c8f]' },
   in_progress: { th: 'กำลังตรวจสอบ', cls: 'bg-yellow-50 text-[#cb6a00]' },
   resolved: { th: 'แก้ไขแล้ว', cls: 'bg-green-50 text-[#0f7b6c]' },
-  closed: { th: 'ปิด', cls: 'bg-[#f7f6f3] text-[#787774]' },
-  wont_fix: { th: 'ไม่แก้ไข', cls: 'bg-[#f7f6f3] text-[#787774]' },
+  closed: { th: 'ปิด', cls: 'bg-[#f3f0ea] text-[#6c6770]' },
+  wont_fix: { th: 'ไม่แก้ไข', cls: 'bg-[#f3f0ea] text-[#6c6770]' },
 };
 
 const SEVERITY_LABEL = {
-  low: { th: 'น้อย', cls: 'bg-[#f7f6f3] text-[#787774]' },
+  low: { th: 'น้อย', cls: 'bg-[#f3f0ea] text-[#6c6770]' },
   medium: { th: 'ปานกลาง', cls: 'bg-yellow-50 text-[#cb6a00]' },
   high: { th: 'มาก', cls: 'bg-orange-50 text-[#d9730d]' },
-  critical: { th: 'วิกฤติ', cls: 'bg-red-50 text-[#e03e3e]' },
+  critical: { th: 'วิกฤติ', cls: 'bg-red-50 text-[#c33b32]' },
 };
 
 const CATEGORY_LABEL = {
@@ -48,17 +48,17 @@ export default function MyBugReports() {
     }
   }
 
-  if (loading) return <div className="text-[#787774] text-sm">กำลังโหลด...</div>;
+  if (loading) return <div className="text-[#6c6770] text-sm">กำลังโหลด...</div>;
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[#37352f] mb-1">บั๊กที่ฉันแจ้ง</h1>
-        <p className="text-sm text-[#787774]">รายการบั๊กและข้อเสนอแนะของคุณ</p>
+        <h1 className="text-3xl font-bold text-[#221f26] mb-1">บั๊กที่ฉันแจ้ง</h1>
+        <p className="text-sm text-[#6c6770]">รายการบั๊กและข้อเสนอแนะของคุณ</p>
       </div>
 
       {list.length === 0 && (
-        <div className="text-center py-12 text-[#787774] notion-card">
+        <div className="text-center py-12 text-[#6c6770] notion-card">
           <Bug size={32} className="mx-auto mb-2 opacity-40" />
           <div className="text-sm">คุณยังไม่ได้แจ้งบั๊ก กดปุ่ม 🔺 มุมล่างขวาเพื่อแจ้ง</div>
         </div>
@@ -75,26 +75,26 @@ export default function MyBugReports() {
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className={`badge ${status.cls}`}>{status.th}</span>
                     <span className={`badge ${severity.cls}`}>{severity.th}</span>
-                    <span className="badge bg-[#f7f6f3] text-[#787774]">{CATEGORY_LABEL[r.category]}</span>
+                    <span className="badge bg-[#f3f0ea] text-[#6c6770]">{CATEGORY_LABEL[r.category]}</span>
                   </div>
-                  <div className="font-semibold text-[#37352f]">{r.title}</div>
-                  <div className="text-sm text-[#37352f] mt-1 whitespace-pre-wrap">{r.description}</div>
+                  <div className="font-semibold text-[#221f26]">{r.title}</div>
+                  <div className="text-sm text-[#221f26] mt-1 whitespace-pre-wrap">{r.description}</div>
 
                   {r.screenshotUrl && (
                     <a href={r.screenshotUrl} target="_blank" rel="noreferrer">
-                      <img src={r.screenshotUrl} className="mt-2 max-h-32 rounded border border-[#e9e9e7]" alt="" />
+                      <img src={r.screenshotUrl} className="mt-2 max-h-32 rounded border border-[#e6e1da]" alt="" />
                     </a>
                   )}
 
                   {r.adminNote && (
-                    <div className="mt-2 p-2 bg-blue-50 border border-blue-100 rounded text-sm text-[#2383e2]">
+                    <div className="mt-2 p-2 bg-violet-50 border border-violet-100 rounded text-sm text-[#6a2c8f]">
                       💬 <span className="font-medium">Admin:</span> {r.adminNote}
                     </div>
                   )}
 
-                  <div className="text-xs text-[#aeacaa] mt-2">
+                  <div className="text-xs text-[#9d97a0] mt-2">
                     {new Date(r.createdAt).toLocaleString('th-TH')}
-                    {r.pageUrl && <span> · หน้า: <code className="bg-[#f7f6f3] px-1 rounded">{r.pageUrl}</code></span>}
+                    {r.pageUrl && <span> · หน้า: <code className="bg-[#f3f0ea] px-1 rounded">{r.pageUrl}</code></span>}
                   </div>
                 </div>
 

@@ -20,7 +20,7 @@ function fmt(d) {
 const STATUS = {
   available: { th: 'ว่าง', cls: 'bg-green-50 text-[#0f7b6c]', icon: CheckCircle },
   borrowed: { th: 'ถูกยืม', cls: 'bg-orange-50 text-[#d9730d]', icon: Clock },
-  maintenance: { th: 'ซ่อมบำรุง', cls: 'bg-[#f7f6f3] text-[#787774]', icon: Wrench },
+  maintenance: { th: 'ซ่อมบำรุง', cls: 'bg-[#f3f0ea] text-[#6c6770]', icon: Wrench },
 };
 
 export default function ItemTracking() {
@@ -74,18 +74,18 @@ export default function ItemTracking() {
   });
 
   const summaryCards = [
-    { label: 'ทั้งหมด', value: summary.total, cls: 'text-[#37352f]', bg: 'bg-[#f7f6f3]', icon: Package },
+    { label: 'ทั้งหมด', value: summary.total, cls: 'text-[#221f26]', bg: 'bg-[#f3f0ea]', icon: Package },
     { label: 'ว่าง', value: summary.available, cls: 'text-[#0f7b6c]', bg: 'bg-green-50', icon: CheckCircle },
     { label: 'ถูกยืม', value: summary.borrowed, cls: 'text-[#d9730d]', bg: 'bg-orange-50', icon: Clock },
-    { label: 'เกินกำหนด', value: summary.overdue, cls: 'text-[#e03e3e]', bg: 'bg-red-50', icon: AlertTriangle },
+    { label: 'เกินกำหนด', value: summary.overdue, cls: 'text-[#c33b32]', bg: 'bg-red-50', icon: AlertTriangle },
   ];
 
   return (
     <div>
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#37352f] mb-1">ติดตามเครื่องมือ</h1>
-          <p className="text-sm text-[#787774]">เครื่องมือแต่ละชิ้นอยู่ที่ไหน ใครถืออยู่ และนานแค่ไหน (อัปเดตอัตโนมัติทุก 30 วิ)</p>
+          <h1 className="text-3xl font-bold text-[#221f26] mb-1">ติดตามเครื่องมือ</h1>
+          <p className="text-sm text-[#6c6770]">เครื่องมือแต่ละชิ้นอยู่ที่ไหน ใครถืออยู่ และนานแค่ไหน (อัปเดตอัตโนมัติทุก 30 วิ)</p>
         </div>
         <button onClick={load} className="btn-secondary" title="รีเฟรช">
           <RefreshCw size={14} /> รีเฟรช
@@ -102,7 +102,7 @@ export default function ItemTracking() {
                 <Icon size={15} className={c.cls} />
               </div>
               <div className={`text-2xl font-bold tabular-nums ${c.cls}`}>{c.value}</div>
-              <div className="text-xs text-[#787774]">{c.label}</div>
+              <div className="text-xs text-[#6c6770]">{c.label}</div>
             </div>
           );
         })}
@@ -111,7 +111,7 @@ export default function ItemTracking() {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="relative flex-1 min-w-[220px] max-w-md">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#787774]" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6c6770]" />
           <input
             placeholder="ค้นหา (ชื่อเครื่องมือ, ผู้ถือ, แผนก)..."
             value={search}
@@ -134,10 +134,10 @@ export default function ItemTracking() {
         </select>
       </div>
 
-      {loading && <div className="text-[#787774] text-sm">กำลังโหลด...</div>}
+      {loading && <div className="text-[#6c6770] text-sm">กำลังโหลด...</div>}
 
       {/* Tracking table */}
-      <div className="bg-white border border-[#e9e9e7] rounded-lg overflow-hidden">
+      <div className="bg-white border border-[#e6e1da] rounded-lg overflow-hidden">
         <table className="notion-table">
           <thead>
             <tr>
@@ -161,23 +161,23 @@ export default function ItemTracking() {
                   <td>
                     <div className="flex items-center gap-3">
                       {it.imageUrl ? (
-                        <img src={it.imageUrl} className="w-9 h-9 rounded object-cover border border-[#e9e9e7]" alt="" />
+                        <img src={it.imageUrl} className="w-9 h-9 rounded object-cover border border-[#e6e1da]" alt="" />
                       ) : (
-                        <div className="w-9 h-9 rounded bg-[#f7f6f3] border border-[#e9e9e7] flex items-center justify-center">
-                          <Package size={16} className="text-[#787774]" />
+                        <div className="w-9 h-9 rounded bg-[#f3f0ea] border border-[#e6e1da] flex items-center justify-center">
+                          <Package size={16} className="text-[#6c6770]" />
                         </div>
                       )}
                       <div>
-                        <div className="font-medium text-[#37352f]">{it.name}</div>
-                        {it.category && <div className="text-xs text-[#aeacaa]">{it.category}</div>}
+                        <div className="font-medium text-[#221f26]">{it.name}</div>
+                        {it.category && <div className="text-xs text-[#9d97a0]">{it.category}</div>}
                       </div>
                     </div>
                   </td>
                   <td>
                     {it.ownerDepartment ? (
-                      <span className="badge bg-blue-50 text-[#2383e2]"><Building2 size={11} /> {it.ownerDepartment}</span>
+                      <span className="badge bg-violet-50 text-[#6a2c8f]"><Building2 size={11} /> {it.ownerDepartment}</span>
                     ) : (
-                      <span className="badge bg-[#f7f6f3] text-[#787774]">ส่วนกลาง</span>
+                      <span className="badge bg-[#f3f0ea] text-[#6c6770]">ส่วนกลาง</span>
                     )}
                   </td>
                   <td><span className={`badge ${st.cls}`}><StIcon size={11} /> {st.th}</span></td>
@@ -188,31 +188,31 @@ export default function ItemTracking() {
                           {it.currentBorrow.borrower.name?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                         <div>
-                          <div className="text-[#37352f]">{it.currentBorrow.borrower.name}</div>
+                          <div className="text-[#221f26]">{it.currentBorrow.borrower.name}</div>
                           {it.currentBorrow.borrower.department && (
-                            <div className="text-xs text-[#aeacaa]">{it.currentBorrow.borrower.department}</div>
+                            <div className="text-xs text-[#9d97a0]">{it.currentBorrow.borrower.department}</div>
                           )}
                         </div>
                       </div>
                     ) : (
-                      <span className="text-[#aeacaa]">—</span>
+                      <span className="text-[#9d97a0]">—</span>
                     )}
                   </td>
-                  <td className="text-[#787774]">{fmt(it.currentBorrow?.borrowDate)}</td>
+                  <td className="text-[#6c6770]">{fmt(it.currentBorrow?.borrowDate)}</td>
                   <td>
                     {it.currentBorrow?.dueDate ? (
-                      <span className={overdue ? 'text-[#e03e3e] font-medium flex items-center gap-1' : 'text-[#787774]'}>
+                      <span className={overdue ? 'text-[#c33b32] font-medium flex items-center gap-1' : 'text-[#6c6770]'}>
                         {overdue && <AlertTriangle size={12} />}
                         {fmt(it.currentBorrow.dueDate)}
                       </span>
-                    ) : <span className="text-[#aeacaa]">-</span>}
+                    ) : <span className="text-[#9d97a0]">-</span>}
                   </td>
                   <td>
                     {held !== null && it.status === 'borrowed' ? (
-                      <span className={overdue ? 'text-[#e03e3e] font-medium' : 'text-[#787774]'}>
+                      <span className={overdue ? 'text-[#c33b32] font-medium' : 'text-[#6c6770]'}>
                         {held} วัน
                       </span>
-                    ) : <span className="text-[#aeacaa]">-</span>}
+                    ) : <span className="text-[#9d97a0]">-</span>}
                   </td>
                 </tr>
               );
@@ -220,7 +220,7 @@ export default function ItemTracking() {
           </tbody>
         </table>
         {!loading && filtered.length === 0 && (
-          <div className="text-center py-12 text-[#787774]">
+          <div className="text-center py-12 text-[#6c6770]">
             <MapPin size={32} className="mx-auto mb-2 opacity-40" />
             <div className="text-sm">ไม่พบเครื่องมือ</div>
           </div>

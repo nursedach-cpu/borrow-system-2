@@ -118,8 +118,8 @@ export default function Scanner() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[#37352f] mb-1">สแกน QR Code</h1>
-        <p className="text-sm text-[#787774]">สแกน QR Code หรือพิมพ์รหัสเพื่อยืมอุปกรณ์</p>
+        <h1 className="text-3xl font-bold text-[#221f26] mb-1">สแกน QR Code</h1>
+        <p className="text-sm text-[#6c6770]">สแกน QR Code หรือพิมพ์รหัสเพื่อยืมอุปกรณ์</p>
       </div>
 
       {success && (
@@ -134,8 +134,8 @@ export default function Scanner() {
 
       {error && (
         <div className="notion-card border-red-100 bg-red-50 mb-4 max-w-md">
-          <div className="text-[#e03e3e]">{error}</div>
-          <button onClick={reset} className="block mt-2 text-sm text-[#e03e3e] underline">ลองใหม่</button>
+          <div className="text-[#c33b32]">{error}</div>
+          <button onClick={reset} className="block mt-2 text-sm text-[#c33b32] underline">ลองใหม่</button>
         </div>
       )}
 
@@ -144,7 +144,7 @@ export default function Scanner() {
           {!cameraError && <QrScanner onScan={handleScan} onError={() => setCameraError(true)} />}
 
           <div className="max-w-sm mx-auto mt-4 notion-card">
-            <p className="text-sm text-[#787774] mb-2">
+            <p className="text-sm text-[#6c6770] mb-2">
               {cameraError ? 'ไม่สามารถเปิดกล้องได้ — ' : ''}พิมพ์รหัส QR Code แทน
             </p>
             <div className="flex gap-2">
@@ -159,15 +159,15 @@ export default function Scanner() {
 
       {item && (
         <div className="notion-card max-w-md mx-auto mt-4">
-          {item.imageUrl && <img src={item.imageUrl} className="w-full h-40 object-cover rounded mb-3 border border-[#e9e9e7]" alt="" />}
-          <h3 className="font-bold text-xl text-[#37352f]">{item.name}</h3>
-          {item.category && <div className="text-sm text-[#787774]">{item.category}</div>}
-          {item.description && <div className="text-sm text-[#37352f] mt-1">{item.description}</div>}
+          {item.imageUrl && <img src={item.imageUrl} className="w-full h-40 object-cover rounded mb-3 border border-[#e6e1da]" alt="" />}
+          <h3 className="font-bold text-xl text-[#221f26]">{item.name}</h3>
+          {item.category && <div className="text-sm text-[#6c6770]">{item.category}</div>}
+          {item.description && <div className="text-sm text-[#221f26] mt-1">{item.description}</div>}
 
           <div className={`mt-3 px-3 py-2 rounded text-sm font-medium flex items-center gap-2 ${
             item.status === 'available' ? 'bg-green-50 text-[#0f7b6c]'
               : item.status === 'borrowed' ? 'bg-orange-50 text-[#d9730d]'
-              : 'bg-[#f7f6f3] text-[#787774]'
+              : 'bg-[#f3f0ea] text-[#6c6770]'
           }`}>
             {item.status === 'available' && <><CheckCircle size={16} /> ของชิ้นนี้ว่าง</>}
             {item.status === 'borrowed' && (
@@ -178,41 +178,41 @@ export default function Scanner() {
             {item.status === 'maintenance' && <><Wrench size={16} /> อยู่ระหว่างซ่อม</>}
           </div>
 
-          <div className="flex gap-1 mt-3 border-b border-[#e9e9e7]">
+          <div className="flex gap-1 mt-3 border-b border-[#e6e1da]">
             {item.status === 'available' && (
               <button onClick={() => setMode('borrow')}
-                className={`px-3 py-2 text-sm border-b-2 ${mode === 'borrow' ? 'border-[#2383e2] text-[#2383e2] font-medium' : 'border-transparent text-[#787774]'}`}
+                className={`px-3 py-2 text-sm border-b-2 ${mode === 'borrow' ? 'border-[#6a2c8f] text-[#6a2c8f] font-medium' : 'border-transparent text-[#6c6770]'}`}
               >ยืมเลย</button>
             )}
             {item.status === 'borrowed' && (
               <button onClick={() => setMode('queue')}
-                className={`px-3 py-2 text-sm border-b-2 ${mode === 'queue' ? 'border-[#7c3aed] text-[#7c3aed] font-medium' : 'border-transparent text-[#787774]'}`}
+                className={`px-3 py-2 text-sm border-b-2 ${mode === 'queue' ? 'border-[#7c3aed] text-[#7c3aed] font-medium' : 'border-transparent text-[#6c6770]'}`}
               >จองคิว</button>
             )}
             <button onClick={() => setMode('schedule')}
-              className={`px-3 py-2 text-sm border-b-2 ${mode === 'schedule' ? 'border-sky-600 text-sky-600 font-medium' : 'border-transparent text-[#787774]'}`}
+              className={`px-3 py-2 text-sm border-b-2 ${mode === 'schedule' ? 'border-sky-600 text-sky-600 font-medium' : 'border-transparent text-[#6c6770]'}`}
             >จองล่วงหน้า</button>
           </div>
 
           {mode === 'borrow' && item.status === 'available' && (
             <div className="mt-4 space-y-3">
               <label className="block">
-                <span className="text-xs font-medium text-[#787774] uppercase tracking-wider flex items-center gap-1"><Calendar size={11} /> กำหนดคืน (ไม่บังคับ)</span>
+                <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider flex items-center gap-1"><Calendar size={11} /> กำหนดคืน (ไม่บังคับ)</span>
                 <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="notion-input mt-1" />
               </label>
               <label className="block">
-                <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">หมายเหตุ</span>
+                <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">หมายเหตุ</span>
                 <input value={note} onChange={(e) => setNote(e.target.value)} className="notion-input mt-1" placeholder="เช่น ใช้ในห้องประชุม A" />
               </label>
               <label className="block">
-                <span className="text-xs font-medium text-[#787774] uppercase tracking-wider flex items-center gap-1"><Camera size={11} /> แนบรูปถ่าย (ไม่บังคับ)</span>
+                <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider flex items-center gap-1"><Camera size={11} /> แนบรูปถ่าย (ไม่บังคับ)</span>
                 <input type="file" accept="image/*" capture="environment" onChange={handlePhotoChange}
-                  className="block w-full text-sm text-[#787774] mt-1
+                  className="block w-full text-sm text-[#6c6770] mt-1
                     file:mr-2 file:py-2 file:px-3 file:rounded-md file:border-0
-                    file:text-sm file:bg-[#f7f6f3] file:text-[#37352f] hover:file:bg-[#efefee]" />
+                    file:text-sm file:bg-[#f3f0ea] file:text-[#221f26] hover:file:bg-[#ebe6df]" />
               </label>
               {photoPreview && (
-                <img src={photoPreview} className="w-full h-32 object-cover rounded border border-[#e9e9e7]" alt="" />
+                <img src={photoPreview} className="w-full h-32 object-cover rounded border border-[#e6e1da]" alt="" />
               )}
               <button onClick={handleBorrow} disabled={submitting} className="w-full btn-primary justify-center py-2.5">
                 {submitting ? 'กำลังส่ง...' : 'ขอยืม'}
@@ -222,11 +222,11 @@ export default function Scanner() {
 
           {mode === 'queue' && (
             <div className="mt-4 space-y-3">
-              <p className="text-sm text-[#787774] flex items-center gap-1">
+              <p className="text-sm text-[#6c6770] flex items-center gap-1">
                 <BookmarkCheck size={14} /> จองคิวรอยืม — ระบบจะแจ้งเมื่อถึงคิวของคุณ (FIFO)
               </p>
               <label className="block">
-                <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">หมายเหตุ (ไม่บังคับ)</span>
+                <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">หมายเหตุ (ไม่บังคับ)</span>
                 <input value={note} onChange={(e) => setNote(e.target.value)} className="notion-input mt-1" placeholder="เช่น ต้องใช้เร่งด่วน" />
               </label>
               <button onClick={handleQueue} disabled={submitting}
@@ -238,19 +238,19 @@ export default function Scanner() {
 
           {mode === 'schedule' && (
             <div className="mt-4 space-y-3">
-              <p className="text-sm text-[#787774] flex items-center gap-1">
+              <p className="text-sm text-[#6c6770] flex items-center gap-1">
                 <CalendarClock size={14} /> จองล่วงหน้าเป็นช่วงวันที่ — Admin จะอนุมัติก่อน
               </p>
               <label className="block">
-                <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">วันที่เริ่ม</span>
+                <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">วันที่เริ่ม</span>
                 <input type="date" value={scheduleStart} onChange={(e) => setScheduleStart(e.target.value)} className="notion-input mt-1" />
               </label>
               <label className="block">
-                <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">วันที่สิ้นสุด</span>
+                <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">วันที่สิ้นสุด</span>
                 <input type="date" value={scheduleEnd} onChange={(e) => setScheduleEnd(e.target.value)} className="notion-input mt-1" />
               </label>
               <label className="block">
-                <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">หมายเหตุ (ไม่บังคับ)</span>
+                <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">หมายเหตุ (ไม่บังคับ)</span>
                 <input value={note} onChange={(e) => setNote(e.target.value)} className="notion-input mt-1" />
               </label>
               <button onClick={handleSchedule} disabled={submitting}
@@ -260,7 +260,7 @@ export default function Scanner() {
             </div>
           )}
 
-          <button onClick={reset} className="mt-3 inline-flex items-center gap-1 text-sm text-[#787774] hover:text-[#37352f]">
+          <button onClick={reset} className="mt-3 inline-flex items-center gap-1 text-sm text-[#6c6770] hover:text-[#221f26]">
             <RotateCcw size={13} /> สแกนใหม่
           </button>
         </div>

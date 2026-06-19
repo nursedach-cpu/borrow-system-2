@@ -13,7 +13,7 @@ const STATUS_LABEL = {
 
 const BORROW_STATUS_LABEL = {
   pending: { th: 'รออนุมัติ', color: 'bg-yellow-100 text-yellow-800' },
-  approved: { th: 'ยืมอยู่', color: 'bg-blue-100 text-blue-700' },
+  approved: { th: 'ยืมอยู่', color: 'bg-violet-100 text-blue-700' },
   rejected: { th: 'ถูกปฏิเสธ', color: 'bg-red-100 text-red-700' },
   returned: { th: 'คืนแล้ว', color: 'bg-green-100 text-green-700' },
 };
@@ -124,7 +124,7 @@ export default function ItemBorrowStats() {
                 <FragmentRow key={r._id}>
                   <tr
                     onClick={() => toggle(r._id)}
-                    className={`border-t hover:bg-gray-50 cursor-pointer ${expanded ? 'bg-blue-50' : ''}`}
+                    className={`border-t hover:bg-gray-50 cursor-pointer ${expanded ? 'bg-violet-50' : ''}`}
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function ItemBorrowStats() {
                   </tr>
 
                   {expanded && (
-                    <tr className="bg-blue-50/50">
+                    <tr className="bg-violet-50/50">
                       <td colSpan={7} className="p-4">
                         <div className="font-medium text-sm mb-2">📜 ประวัติการยืม</div>
                         {!historyMap[r._id] && (

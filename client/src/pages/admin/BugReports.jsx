@@ -3,18 +3,18 @@ import api from '../../api/client';
 import { Bug, Save, Trash2, Settings2, Inbox } from 'lucide-react';
 
 const STATUS_OPTIONS = [
-  { value: 'open', label: 'ใหม่', cls: 'bg-blue-50 text-[#2383e2]' },
+  { value: 'open', label: 'ใหม่', cls: 'bg-violet-50 text-[#6a2c8f]' },
   { value: 'in_progress', label: 'กำลังตรวจสอบ', cls: 'bg-yellow-50 text-[#cb6a00]' },
   { value: 'resolved', label: 'แก้ไขแล้ว', cls: 'bg-green-50 text-[#0f7b6c]' },
-  { value: 'closed', label: 'ปิด', cls: 'bg-[#f7f6f3] text-[#787774]' },
-  { value: 'wont_fix', label: 'ไม่แก้ไข', cls: 'bg-[#f7f6f3] text-[#787774]' },
+  { value: 'closed', label: 'ปิด', cls: 'bg-[#f3f0ea] text-[#6c6770]' },
+  { value: 'wont_fix', label: 'ไม่แก้ไข', cls: 'bg-[#f3f0ea] text-[#6c6770]' },
 ];
 
 const SEVERITY_LABEL = {
-  low: { th: 'น้อย', cls: 'bg-[#f7f6f3] text-[#787774]' },
+  low: { th: 'น้อย', cls: 'bg-[#f3f0ea] text-[#6c6770]' },
   medium: { th: 'ปานกลาง', cls: 'bg-yellow-50 text-[#cb6a00]' },
   high: { th: 'มาก', cls: 'bg-orange-50 text-[#d9730d]' },
-  critical: { th: 'วิกฤติ', cls: 'bg-red-50 text-[#e03e3e]' },
+  critical: { th: 'วิกฤติ', cls: 'bg-red-50 text-[#c33b32]' },
 };
 
 const CATEGORY_LABEL = {
@@ -90,25 +90,25 @@ export default function AdminBugReports() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[#37352f] mb-1">จัดการรายงานบั๊ก</h1>
-        <p className="text-sm text-[#787774]">รายงานบั๊กและข้อเสนอแนะจากผู้ใช้</p>
+        <h1 className="text-3xl font-bold text-[#221f26] mb-1">จัดการรายงานบั๊ก</h1>
+        <p className="text-sm text-[#6c6770]">รายงานบั๊กและข้อเสนอแนะจากผู้ใช้</p>
       </div>
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           {[
-            { label: 'ใหม่', value: stats.open, cls: 'text-[#2383e2]', bg: 'bg-blue-50' },
+            { label: 'ใหม่', value: stats.open, cls: 'text-[#6a2c8f]', bg: 'bg-violet-50' },
             { label: 'กำลังตรวจ', value: stats.inProgress, cls: 'text-[#cb6a00]', bg: 'bg-yellow-50' },
             { label: 'แก้แล้ว', value: stats.resolved, cls: 'text-[#0f7b6c]', bg: 'bg-green-50' },
-            { label: 'ปิด', value: stats.closed, cls: 'text-[#787774]', bg: 'bg-[#f7f6f3]' },
-            { label: 'วิกฤติค้าง', value: stats.criticalUnresolved, cls: 'text-[#e03e3e]', bg: 'bg-red-50' },
+            { label: 'ปิด', value: stats.closed, cls: 'text-[#6c6770]', bg: 'bg-[#f3f0ea]' },
+            { label: 'วิกฤติค้าง', value: stats.criticalUnresolved, cls: 'text-[#c33b32]', bg: 'bg-red-50' },
           ].map((s) => (
             <div key={s.label} className="notion-card">
               <div className={`w-8 h-8 rounded-md ${s.bg} flex items-center justify-center mb-2`}>
                 <Bug size={14} className={s.cls} />
               </div>
               <div className={`text-2xl font-bold ${s.cls} tabular-nums`}>{s.value}</div>
-              <div className="text-xs text-[#787774]">{s.label}</div>
+              <div className="text-xs text-[#6c6770]">{s.label}</div>
             </div>
           ))}
         </div>
@@ -128,9 +128,9 @@ export default function AdminBugReports() {
         </select>
       </div>
 
-      {loading && <div className="text-[#787774] text-sm">กำลังโหลด...</div>}
+      {loading && <div className="text-[#6c6770] text-sm">กำลังโหลด...</div>}
       {!loading && list.length === 0 && (
-        <div className="text-center py-12 text-[#787774] notion-card">
+        <div className="text-center py-12 text-[#6c6770] notion-card">
           <Inbox size={32} className="mx-auto mb-2 opacity-40" />
           <div className="text-sm">ไม่มีรายงาน</div>
         </div>
@@ -148,32 +148,32 @@ export default function AdminBugReports() {
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className={`badge ${status.cls}`}>{status.label}</span>
                     <span className={`badge ${sev.cls}`}>{sev.th}</span>
-                    <span className="badge bg-[#f7f6f3] text-[#787774]">{CATEGORY_LABEL[r.category]}</span>
+                    <span className="badge bg-[#f3f0ea] text-[#6c6770]">{CATEGORY_LABEL[r.category]}</span>
                   </div>
-                  <div className="font-semibold text-[#37352f]">{r.title}</div>
-                  <div className="text-sm text-[#787774] mt-1">
-                    โดย: <span className="font-medium text-[#37352f]">{r.reporter?.name || '-'}</span>
-                    {r.reporter?.department && <span className="text-[#aeacaa]"> · {r.reporter.department}</span>}
+                  <div className="font-semibold text-[#221f26]">{r.title}</div>
+                  <div className="text-sm text-[#6c6770] mt-1">
+                    โดย: <span className="font-medium text-[#221f26]">{r.reporter?.name || '-'}</span>
+                    {r.reporter?.department && <span className="text-[#9d97a0]"> · {r.reporter.department}</span>}
                   </div>
-                  <div className="text-sm text-[#37352f] mt-2 whitespace-pre-wrap">{r.description}</div>
+                  <div className="text-sm text-[#221f26] mt-2 whitespace-pre-wrap">{r.description}</div>
 
                   {r.screenshotUrl && (
                     <a href={r.screenshotUrl} target="_blank" rel="noreferrer">
-                      <img src={r.screenshotUrl} className="mt-2 max-h-40 rounded border border-[#e9e9e7]" alt="" />
+                      <img src={r.screenshotUrl} className="mt-2 max-h-40 rounded border border-[#e6e1da]" alt="" />
                     </a>
                   )}
 
                   {r.adminNote && !isEditing && (
-                    <div className="mt-2 p-2 bg-blue-50 border border-blue-100 rounded text-sm text-[#2383e2]">
+                    <div className="mt-2 p-2 bg-violet-50 border border-violet-100 rounded text-sm text-[#6a2c8f]">
                       💬 <span className="font-medium">Note:</span> {r.adminNote}
                     </div>
                   )}
 
-                  <div className="text-xs text-[#aeacaa] mt-2">
+                  <div className="text-xs text-[#9d97a0] mt-2">
                     {new Date(r.createdAt).toLocaleString('th-TH')}
-                    {r.pageUrl && <span> · <code className="bg-[#f7f6f3] px-1 rounded">{r.pageUrl}</code></span>}
+                    {r.pageUrl && <span> · <code className="bg-[#f3f0ea] px-1 rounded">{r.pageUrl}</code></span>}
                   </div>
-                  {r.userAgent && <div className="text-xs text-[#aeacaa] truncate">UA: {r.userAgent}</div>}
+                  {r.userAgent && <div className="text-xs text-[#9d97a0] truncate">UA: {r.userAgent}</div>}
                 </div>
 
                 <div className="flex flex-col gap-1 min-w-[100px]">
@@ -191,15 +191,15 @@ export default function AdminBugReports() {
               </div>
 
               {isEditing && (
-                <div className="mt-3 p-3 bg-[#f7f6f3] rounded space-y-2">
+                <div className="mt-3 p-3 bg-[#f3f0ea] rounded space-y-2">
                   <div>
-                    <label className="block text-xs font-medium text-[#787774] uppercase tracking-wider mb-1">เปลี่ยนสถานะ</label>
+                    <label className="block text-xs font-medium text-[#6c6770] uppercase tracking-wider mb-1">เปลี่ยนสถานะ</label>
                     <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="notion-input">
                       {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[#787774] uppercase tracking-wider mb-1">โน้ตถึงผู้แจ้ง (ไม่บังคับ)</label>
+                    <label className="block text-xs font-medium text-[#6c6770] uppercase tracking-wider mb-1">โน้ตถึงผู้แจ้ง (ไม่บังคับ)</label>
                     <textarea value={editNote} onChange={(e) => setEditNote(e.target.value)} rows={2}
                       placeholder="เช่น แก้ไขใน v1.2 แล้ว / ขอบคุณสำหรับข้อเสนอ"
                       className="notion-input" />

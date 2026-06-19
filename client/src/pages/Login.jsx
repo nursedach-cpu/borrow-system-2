@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Brandmark from '../components/Brandmark';
 
 function UserGuide({ lang, onToggleLang }) {
   if (lang === 'th') {
@@ -103,24 +104,22 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fbfbfa] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#f6f4f1] p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-[#2383e2] rounded-xl text-white text-xl font-bold mb-3">
-            📦
-          </div>
-          <h2 className="text-2xl font-bold text-[#37352f]">ระบบยืม-คืนอุปกรณ์</h2>
-          <p className="text-sm text-[#787774] mt-1">Equipment Borrowing System</p>
+        <div className="flex flex-col items-center text-center mb-6">
+          <Brandmark size={46} />
+          <h2 className="text-[22px] font-bold text-[var(--ink)] mt-3">ระบบยืม-คืนอุปกรณ์</h2>
+          <p className="text-[13px] text-[var(--ink-faint)] mt-0.5">เครื่องมือและอุปกรณ์ · การไฟฟ้า</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white border border-[#e9e9e7] p-7 rounded-lg">
+        <form onSubmit={handleSubmit} className="bg-white border border-[var(--line)] p-7 rounded-xl shadow-[0_1px_3px_rgba(34,31,38,0.06)]">
           {error && (
-            <div className="bg-red-50 border border-red-100 text-[#e03e3e] p-3 rounded-md mb-4 text-sm">
+            <div className="bg-red-50 border border-red-100 text-[#c33b32] p-3 rounded-md mb-4 text-sm">
               {error}
             </div>
           )}
           <label className="block mb-4">
-            <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">อีเมล / Email</span>
+            <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">อีเมล / Email</span>
             <input
               type="email"
               value={email}
@@ -130,7 +129,7 @@ export default function Login() {
             />
           </label>
           <label className="block mb-5">
-            <span className="text-xs font-medium text-[#787774] uppercase tracking-wider">รหัสผ่าน / Password</span>
+            <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">รหัสผ่าน / Password</span>
             <input
               type="password"
               value={password}
@@ -142,24 +141,24 @@ export default function Login() {
           <button type="submit" className="w-full btn-primary justify-center py-2.5">
             เข้าสู่ระบบ / Login
           </button>
-          <p className="text-center text-sm mt-4 text-[#787774]">
+          <p className="text-center text-sm mt-4 text-[#6c6770]">
             ยังไม่มีบัญชี?{' '}
-            <Link to="/register" className="text-[#2383e2] hover:underline font-medium">
+            <Link to="/register" className="text-[#6a2c8f] hover:underline font-medium">
               สมัครสมาชิก / Register
             </Link>
           </p>
         </form>
 
-        <div className="mt-4 bg-white border border-[#e9e9e7] rounded-lg overflow-hidden">
+        <div className="mt-4 bg-white border border-[#e6e1da] rounded-lg overflow-hidden">
           <button
             onClick={() => setShowGuide(!showGuide)}
-            className="w-full px-5 py-3 text-sm font-medium text-[#37352f] hover:bg-[#f7f6f3] flex items-center justify-between transition-colors"
+            className="w-full px-5 py-3 text-sm font-medium text-[#221f26] hover:bg-[#f3f0ea] flex items-center justify-between transition-colors"
           >
             <span>📖 คู่มือการใช้งาน / User Guide</span>
-            <span className="text-xs text-[#787774]">{showGuide ? '▲' : '▼'}</span>
+            <span className="text-xs text-[#6c6770]">{showGuide ? '▲' : '▼'}</span>
           </button>
           {showGuide && (
-            <div className="px-5 pb-5 border-t border-[#e9e9e7]">
+            <div className="px-5 pb-5 border-t border-[#e6e1da]">
               <div className="mt-4">
                 <UserGuide lang={guideLang} onToggleLang={() => setGuideLang(guideLang === 'th' ? 'en' : 'th')} />
               </div>
