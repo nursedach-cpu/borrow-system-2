@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
 import { Plus, Pencil, Trash2, QrCode, Upload, Package, Building2 } from 'lucide-react';
-import { DEPARTMENTS } from '../../constants/departments';
+import { DEPARTMENTS, deptLabel } from '../../constants/departments';
 
 const EMPTY_FORM = { name: '', description: '', category: '', ownerDepartment: '' };
 
@@ -125,11 +125,11 @@ export default function Items() {
           </div>
           <input name="description" placeholder="รายละเอียด" value={form.description} onChange={onChange} className="notion-input mb-3" />
           <label className="block mb-4">
-            <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">เจ้าของแผนก</span>
+            <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">เจ้าของแผนก/สังกัด</span>
             <select name="ownerDepartment" value={form.ownerDepartment} onChange={onChange} className="notion-input mt-1.5">
               <option value="">ของส่วนกลาง (ใครยืมก็ได้)</option>
               {DEPARTMENTS.map((d) => (
-                <option key={d.code} value={d.code}>{d.code} — {d.name}</option>
+                <option key={d.code} value={d.code}>{deptLabel(d)}</option>
               ))}
             </select>
           </label>

@@ -6,9 +6,7 @@ const auth = require('../middleware/auth');
 const asyncHandler = require('../middleware/asyncHandler');
 const { authLimiter } = require('../middleware/rateLimiter');
 const { ApiError } = require('../middleware/errorHandler');
-const { ROLES, PASSWORD, DEPARTMENTS } = require('../constants');
-
-const VALID_DEPT_CODES = DEPARTMENTS.map((d) => d.code);
+const { ROLES, PASSWORD } = require('../constants');
 
 const router = express.Router();
 
@@ -51,13 +49,14 @@ router.post(
     assertValidEmail(email);
     assertStrongPassword(password);
 
-    // Department is optional (outsiders register without one), but if provided it must be valid.
+    // Department/affiliation is optional (outsiders register without one).
+    // The registration field is a combobox: users may pick from the known list
+    // OR type a free value, so we accept any reasonable string here rather than
+    // enforcing the enum. (Admin-scoping departments are assigned separately
+    // from the controlled list, where the enum is still enforced.)
     let normalizedDept = null;
-    if (department && department !== '') {
-      if (!VALID_DEPT_CODES.includes(department)) {
-        throw new ApiError(400, 'แผนกที่ระบุไม่ถูกต้อง');
-      }
-      normalizedDept = department;
+    if (department && department.trim() !== '') {
+      normalizedDept = department.trim().slice(0, 120);
     }
 
     const existing = await User.findOne({ email: email.toLowerCase() });

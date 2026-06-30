@@ -53,13 +53,23 @@ export default function Register() {
             <input name="password" type="password" value={form.password} onChange={onChange} className="notion-input mt-1.5" required />
           </label>
           <label className="block mb-3">
-            <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">แผนก</span>
-            <select name="department" value={form.department} onChange={onChange} className="notion-input mt-1.5">
-              <option value="">— ไม่สังกัด (คนนอก) —</option>
+            <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">แผนก/สังกัด</span>
+            <input
+              name="department"
+              list="dept-options"
+              value={form.department}
+              onChange={onChange}
+              autoComplete="off"
+              placeholder="พิมพ์เพื่อค้นหา หรือเลือกจากรายการ (เว้นว่าง = คนนอก)"
+              className="notion-input mt-1.5"
+            />
+            <datalist id="dept-options">
               {DEPARTMENTS.map((d) => (
-                <option key={d.code} value={d.code}>{d.code} — {d.name}</option>
+                <option key={d.code} value={d.code}>
+                  {d.code === d.name ? '' : d.name}
+                </option>
               ))}
-            </select>
+            </datalist>
           </label>
           <label className="block mb-5">
             <span className="text-xs font-medium text-[#6c6770] uppercase tracking-wider">เบอร์โทร</span>
