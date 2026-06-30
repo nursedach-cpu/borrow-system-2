@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import InstallPrompt from './components/InstallPrompt';
+import ErrorBoundary from './components/ErrorBoundary';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/admin/Dashboard';
@@ -33,6 +34,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <InstallPrompt />
+        <ErrorBoundary>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -64,6 +66,7 @@ export default function App() {
 
           <Route path="*" element={<RootRedirect />} />
         </Routes>
+        </ErrorBoundary>
       </AuthProvider>
     </BrowserRouter>
   );

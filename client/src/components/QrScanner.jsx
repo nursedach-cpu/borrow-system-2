@@ -2,22 +2,35 @@ import { useEffect, useRef } from 'react';
 
 export default function QrScanner({ onScan, onError }) {
   const scannerRef = useRef(null);
-  const mountedRef = useRef(false);
+  const startedRef = useRef(false);
+  const handledRef = useRef(false);
 
   useEffect(() => {
-    if (mountedRef.current) return;
-    mountedRef.current = true;
+    if (startedRef.current) return;
+    startedRef.current = true;
 
-    let scanner;
+    let cancelled = false;
+
     import('html5-qrcode').then(({ Html5Qrcode }) => {
-      scanner = new Html5Qrcode('qr-reader');
+      if (cancelled) return;
+      const scanner = new Html5Qrcode('qr-reader');
       scannerRef.current = scanner;
       return scanner.start(
         { facingMode: 'environment' },
         { fps: 10, qrbox: { width: 250, height: 250 } },
         (text) => {
-          scanner.stop().catch(() => {});
-          onScan(text);
+          // Guard against multiple fires for one scan.
+          if (handledRef.current) return;
+          handledRef.current = true;
+          // IMPORTANT: stop AND clear so html5-qrcode removes the <video>/<canvas>
+          // it injected into #qr-reader BEFORE React unmounts this component.
+          // Otherwise React tries to removeChild a node it didn't create and the
+          // whole app crashes to a white screen.
+          scanner
+            .stop()
+            .then(() => scanner.clear())
+            .catch(() => {})
+            .finally(() => onScan(text));
         },
         () => {}
       );
@@ -26,7 +39,11 @@ export default function QrScanner({ onScan, onError }) {
     });
 
     return () => {
-      if (scanner) scanner.stop().catch(() => {});
+      cancelled = true;
+      const scanner = scannerRef.current;
+      if (scanner) {
+        scanner.stop().then(() => scanner.clear()).catch(() => {});
+      }
     };
   }, []);
 
