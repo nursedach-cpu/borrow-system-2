@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import BugReportButton from './BugReportButton';
@@ -5,7 +6,7 @@ import Brandmark from './Brandmark';
 import {
   LayoutDashboard, Package, CheckCircle2, RotateCcw, CalendarClock,
   History, MapPin, Users, Bug, QrCode, Boxes, BookmarkCheck,
-  ClipboardList, Clock, LogOut, ShieldCheck, User,
+  ClipboardList, Clock, LogOut, ShieldCheck, User, Menu, X,
 } from 'lucide-react';
 
 // Nav is grouped into sections — the way a person organizes an internal tool,
@@ -66,6 +67,7 @@ export default function Layout() {
   const location = useLocation();
   const isAdmin = user.role === 'admin';
   const groups = isAdmin ? adminGroups : borrowerGroups;
+  const [open, setOpen] = useState(false); // mobile drawer
 
   const roleLine = isAdmin
     ? (user.department ? `ผู้ดูแล · ${user.department}` : 'ผู้ดูแลระบบ')
@@ -73,14 +75,36 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      <aside className="w-[248px] bg-[var(--paper)] border-r border-[var(--line)] flex flex-col">
-        {/* Brand lockup */}
+      {/* Mobile top bar */}
+      <header className="md:hidden fixed top-0 inset-x-0 z-30 h-14 bg-[var(--paper)] border-b border-[var(--line)] flex items-center gap-2 px-3">
+        <button onClick={() => setOpen(true)} className="p-2 -ml-1 rounded hover:bg-[var(--surface-2)]" aria-label="เมนู">
+          <Menu size={22} className="text-[var(--ink)]" />
+        </button>
+        <Brandmark size={26} />
+        <span className="text-[15px] font-bold text-[var(--ink)]">ระบบยืม-คืน</span>
+      </header>
+
+      {/* Backdrop (mobile only, when drawer open) */}
+      {open && (
+        <div className="md:hidden fixed inset-0 z-40 bg-black/40" onClick={() => setOpen(false)} />
+      )}
+
+      {/* Sidebar — static on desktop, slide-in drawer on mobile */}
+      <aside
+        className={`fixed md:static inset-y-0 left-0 z-50 w-[248px] bg-[var(--paper)] border-r border-[var(--line)]
+          flex flex-col transform transition-transform duration-200 ease-out
+          ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      >
+        {/* Brand lockup + mobile close */}
         <div className="flex items-center gap-2.5 px-4 pt-4 pb-3">
           <Brandmark size={30} />
-          <div className="leading-tight">
+          <div className="leading-tight flex-1">
             <div className="text-[14px] font-bold text-[var(--ink)]">ระบบยืม-คืน</div>
             <div className="text-[10.5px] text-[var(--ink-faint)] tracking-wide">เครื่องมือ · การไฟฟ้า</div>
           </div>
+          <button onClick={() => setOpen(false)} className="md:hidden p-1.5 rounded hover:bg-[var(--surface-2)]" aria-label="ปิดเมนู">
+            <X size={18} className="text-[var(--ink-soft)]" />
+          </button>
         </div>
 
         <div className="h-px bg-[var(--line)] mx-3" />
@@ -96,7 +120,12 @@ export default function Layout() {
                 const Icon = link.icon;
                 const active = location.pathname === link.to;
                 return (
-                  <Link key={link.to} to={link.to} className={`nav-link ${active ? 'nav-link-active' : ''}`}>
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setOpen(false)}
+                    className={`nav-link ${active ? 'nav-link-active' : ''}`}
+                  >
                     <Icon size={16} />
                     <span>{link.label}</span>
                   </Link>
@@ -127,8 +156,9 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto bg-white">
-        <div className="max-w-6xl mx-auto px-6 md:px-10 py-9">
+      {/* Main content */}
+      <main className="flex-1 overflow-auto bg-white pt-14 md:pt-0">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-9">
           <Outlet />
         </div>
       </main>
